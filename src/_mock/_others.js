@@ -1,15 +1,63 @@
 import { label } from 'yet-another-react-lightbox';
 import { _mock } from './_mock';
 import Image from 'next/image';
+import { sizeof } from 'stylis';
 
 // ----------------------------------------------------------------------
 
-export const _carouselsMembers = Array.from({ length: 6 }, (_, index) => ({
-  id: _mock.id(index),
-  name: _mock.fullName(index),
-  role: _mock.role(index),
-  avatarUrl: _mock.image.portrait(index),
-}));
+export const _carouselPackages = [
+  {
+    id: 1,
+    name: '28 Days Dual Meal',
+    image: '/menu/product-1.webp',
+    alt: '28 Days Dual Meal',
+    description: 'Lunch and Dinner | $$/meal',
+    price: '$1,768.00'
+  },
+  {
+    id: 2,
+    name: '14 Days Dual Meal',
+    image: '/menu/product-2.webp',
+    alt: '14 Days Dual Meal',
+    description: 'Lunch and Dinner | $$/meal',
+    price: '$968.00'
+  },
+  {
+    id: 3,
+    name: '7 Days Dual Meal',
+    image: '/menu/product-3.webp',
+    alt: '7 Days Dual Meal',
+    description: 'Lunch and Dinner | $$/meal',
+    price: '$498.00'
+  }
+];
+
+export const _carouselBenefits = [
+  {
+    id: 1,
+    name: 'Convenience & Quality',
+    image: '/assets/benefitsImage/Benefit-1.webp',
+    alt: 'Convenience & Quality',
+    size: 'cover',
+    description: 'Our unique thermal wares ensure that warm and nutritious meals are delivered to your doorstep timely. Skip the hassle on meal planning, grocery shopping, cooking or washing dishes. Indulge in the luxury of spending quality time with your newborn and family.',
+  },
+  {
+    id: 2,
+    name: 'Meals crafted for your recovery',
+    image: '/assets/benefitsImage/Benefit-2.webp',
+    alt: 'Meals crafted for your recovery',
+    size: 'cover',
+    description: 'Our meals are prepared low in sodium and MSG-free without compromising the taste. These essential nutrients and traditional herbs improve digestion, support healthy lactation and restore the body\'s core energy.',
+  },
+  {
+    id: 3,
+    name: 'Alchemy Fibre™ For healthier mum',
+    image: '/assets/benefitsImage/Benefit-3.webp',
+    alt: 'Alchemy Fibre™ For healthier mum',
+    size: 'contain',
+    description: 'At Chilli Padi Confinement, we enhance our Fragrant White Rice with Alchemy Fibre™ for Rice, providing a healthier choice for new mothers. This revolutionary blend of low GI, high fibre, and prebiotics transforms white rice, significantly increasing its fibre content without compromising taste or texture.',
+  }
+];
 
 // ----------------------------------------------------------------------
 
