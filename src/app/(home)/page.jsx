@@ -3,6 +3,5 @@
 // ----------------------------------------------------------------------
 
 export default function Page() {
-  // return <HomeView />;
-  return <div>Home Page</div>;
+  return <HomeView />;
 }
