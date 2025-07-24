@@ -7,31 +7,23 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 
 import { ScrollProgress, useScrollProgress } from 'src/components/animate/scroll-progress';
-import { SectionTitle } from '../components/section-title';
 
 import { HomeHero } from '../home-hero';
-import { HomeFAQs } from '../home-faqs';
-import { HomeZoneUI } from '../home-zone-ui';
-import { HomeMinimal } from '../home-minimal';
 import { TopPackages } from '../home-top-packages';
 import { Benefits } from '../home-benefit';
-import { HomeForDesigner } from '../home-for-designer';
-import { HomeTestimonials } from '../home-testimonials';
-import { HomeIntegrations } from '../home-integrations';
-import { HomeAdvertisement } from '../home-advertisement';
-import { HomeHugePackElements } from '../home-hugepack-elements';
-import { HomeHighlightFeatures } from '../home-highlight-features';
-
+import { HomeFeature } from '../home-feature';
+import { HomeMenu } from '../home-menu';
+import { HomePopularDish } from '../home-populardish';
+import { HomeOrderSteps } from '../home-orderSteps';
+import { HomePartners } from '../home-partners';
 
 import { _mock } from 'src/_mock';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 
 const SLIDES = [
   {
     id: 1,
     title: 'Banner 1',
-    coverUrl: '/banners/Confinement_Banner.jpg',
+    coverUrl: '/banners/Confinement_Banner.png',
   },
   {
     id: 2,
@@ -41,7 +33,7 @@ const SLIDES = [
   {
     id: 3,
     title: 'Banner 3',
-    coverUrl: '/banners/Confinement_Banner_3.jpg',
+    coverUrl: '/banners/Confinement_Banner_3.png',
   },
 ];
 
@@ -76,7 +68,11 @@ export function HomeView() {
         <TopPackages />
 
         <Benefits />
-        <HomeAdvertisement />
+        <HomeMenu />
+        <HomeFeature />
+        <HomePopularDish />
+        <HomeOrderSteps sx={{ mt: 4 }} />
+        <HomePartners sx={{ mt: 4 }} />
 
       </Stack>
     </>

@@ -4,7 +4,7 @@ import Container from '@mui/material/Container';
 import { CONFIG } from 'src/global-config';
 import { paths } from 'src/routes/paths';
 
-export function HomeAdvertisement({ sx, ...other }) {
+export function HomeMenu({ sx, ...other }) {
   return (
     <Box
       component="section"
@@ -17,6 +17,7 @@ export function HomeAdvertisement({ sx, ...other }) {
           position: 'relative',
           zIndex: 9,
           height: { xs: 400, md: 500 },
+          width: '95%',
           backgroundImage: `url(${CONFIG.assetsDir}/assets/background/aboutus.png)`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
@@ -40,8 +41,10 @@ export function HomeAdvertisement({ sx, ...other }) {
             target="_blank"
             rel="noopener"
             href={paths.minimalStore}
+            component="a"
+            sx={{ minWidth: 240 }}
           >
-            View Menu
+            View Menu &gt;
           </Button>
         </Box>
       </Container>

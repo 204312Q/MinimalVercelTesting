@@ -231,8 +231,8 @@ export function Footer({ sx, layoutQuery = 'md', ...other }) {
                       {link.name}
                       {link.info &&
                         (Array.isArray(link.info)
-                          ? Object.values(link.info[0]).map((item, idx) => (
-                            <span key={idx} style={{ display: 'block' }}>{item}</span>
+                          ? Object.entries(link.info[0]).map(([key, item]) => (
+                            <span key={key} style={{ display: 'block' }}>{item}</span>
                           ))
                           : <span style={{ display: 'block' }}>{link.info}</span>
                         )
@@ -244,12 +244,12 @@ export function Footer({ sx, layoutQuery = 'md', ...other }) {
                       mb: 5,
                       display: 'flex',
                       justifyContent: 'center',
-                      gap: 2, // Add gap between images
+                      gap: 2,
                       [theme.breakpoints.up(layoutQuery)]: { mb: 0, justifyContent: 'flex-start' },
                     })}
                   >
                     {_paymenttypes.map((payment) => (
-                      <Image key={payment.label} src={payment.image} alt={payment.label} width={40} height={40} />
+                      <Image key={payment.id} src={payment.image} alt={payment.value} width={40} height={40} />
                     ))}
                   </Box>
                 </Box>

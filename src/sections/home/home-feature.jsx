@@ -3,18 +3,20 @@ import { m } from 'framer-motion';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
-import { _carouselBenefits } from 'src/_mock';
+import { _carouselPromotion } from 'src/_mock';
 
 import { Image } from 'src/components/image';
 import { varFade, MotionViewport } from 'src/components/animate';
 import { Carousel, useCarousel, CarouselArrowFloatButtons } from 'src/components/carousel';
+import { paths } from 'src/routes/paths';
 
 // ----------------------------------------------------------------------
 
-export function Benefits({ sx, ...other }) {
+export function HomeFeature({ sx, ...other }) {
   const carousel = useCarousel({
     align: 'start',
     slideSpacing: '24px',
@@ -33,9 +35,6 @@ export function Benefits({ sx, ...other }) {
       {...other}
     >
       <Container component={MotionViewport} sx={{ textAlign: 'center', py: { xs: 3, md: 3 } }}>
-        <Typography variant="h2" sx={{ my: 3, color: 'primary.main' }}>
-          Why Choose Us?
-        </Typography>
 
         <m.div variants={varFade('inUp')} initial="initial" whileInView="animate" viewport={{ once: true }}>
           <Box sx={{ position: 'relative' }}>
@@ -49,16 +48,15 @@ export function Benefits({ sx, ...other }) {
                 },
               }}
             />
-
             <Carousel carousel={carousel} sx={{ px: 0.5 }}>
-              {_carouselBenefits.map((b) => (
+              {_carouselPromotion.map((p) => (
                 <Box
-                  key={b.id}
+                  key={p.id}
                   component={m.div}
                   variants={varFade('up')}
                   sx={{ py: { xs: 4, md: 5 } }}
                 >
-                  <MemberCard benefits={b} />
+                  <MemberCard feature={p} />
                 </Box>
               ))}
             </Carousel>
@@ -71,23 +69,13 @@ export function Benefits({ sx, ...other }) {
 
 // ----------------------------------------------------------------------
 
-function MemberCard({ benefits }) {
+function MemberCard({ feature }) {
   return (
-    <Card sx={{ pt: 1, height: 540 }}>
+    <Card sx={{ pt: 1 }}>
       <Box sx={{ px: 1 }}>
-        <Image
-          alt={benefits.alt}
-          src={benefits.image}
-          sx={{
-            borderRadius: 2,
-            objectFit: benefits.size,
-            width: '100%',
-            height: 'auto',
-            display: 'block',
-            maxHeight: { xs: 250, md: 300 },
-          }}
-        />
+        <Image alt={feature.alt} src={feature.image} ratio="1/1" sx={{ borderRadius: 2 }} />
       </Box>
+
       <Box
         sx={{
           p: 2,
@@ -97,12 +85,22 @@ function MemberCard({ benefits }) {
           flexDirection: 'column',
         }}
       >
-        <Typography variant="h6" sx={{ mt: 1, mb: 0.5 }}>
-          {benefits.name}
+        <Typography variant="subtitle1" sx={{ mt: 1, mb: 0.5 }}>
+          {feature.name}
         </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {benefits.description}
+        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2.5 }}>
+          {feature.description}
         </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          href={feature.url}
+          component="a"
+          sx={{ minWidth: 240 }}
+        >
+          View More
+        </Button>
       </Box>
     </Card>
   );
