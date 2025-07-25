@@ -136,7 +136,14 @@ export function Footer({ sx, layoutQuery = 'md', ...other }) {
               })}
             >
               {_socials.map((social) => (
-                <IconButton key={social.label}>
+                <IconButton
+                  key={social.label}
+                  component="a"
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                >
                   {social.value === 'facebook' && <FacebookIcon />}
                   {social.value === 'instagram' && <InstagramIcon />}
                 </IconButton>

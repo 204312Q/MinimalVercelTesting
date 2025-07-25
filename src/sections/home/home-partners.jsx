@@ -34,7 +34,10 @@ export function HomePartners({ sx, ...other }) {
 }
 
 export function CarouselAutoScroll({ data }) {
-    const carousel = useCarousel({ loop: true }, [AutoScroll({ playOnInit: true })]);
+    const carousel = useCarousel(
+        { loop: true },
+        [AutoScroll({ playOnInit: true, stopOnInteraction: false })]
+    );
     return (
         <Box sx={{ position: 'relative', width: 350, mx: 'auto', overflow: 'hidden' }}>
             <Carousel carousel={carousel} sx={{ borderRadius: 2, overflow: 'visible' }}>
