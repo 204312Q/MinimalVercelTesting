@@ -124,7 +124,7 @@ function MemberCard({ popular }) {
           flexDirection: 'column',
         }}
       >
-        <Typography variant="subtitle1" sx={{ mt: 1, mb: 0.5 }}>
+        <Typography variant="h6" sx={{ mt: 1, mb: 0.5 }}>
           {popular.name}
         </Typography>
       </Box>

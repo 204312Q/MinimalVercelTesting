@@ -153,7 +153,7 @@ export function Footer({ sx, layoutQuery = 'md', ...other }) {
                 [theme.breakpoints.up(layoutQuery)]: { mb: 0, justifyContent: 'center', alignItems: 'flex-start' },
               })}
             >
-              <Typography component="div" variant="overline">
+              <Typography component="div" variant="h6">
                 Affiliates
               </Typography>
               <Image
@@ -188,7 +188,7 @@ export function Footer({ sx, layoutQuery = 'md', ...other }) {
                     [theme.breakpoints.up(layoutQuery)]: { alignItems: 'flex-start' },
                   })}
                 >
-                  <Typography component="div" variant="overline" sx={{ color: primary.main }}>
+                  <Typography component="div" variant="h6" sx={{ color: primary.main }}>
                     {list.headline}
                   </Typography>
 
@@ -217,7 +217,7 @@ export function Footer({ sx, layoutQuery = 'md', ...other }) {
                     [theme.breakpoints.up(layoutQuery)]: { alignItems: 'flex-start' },
                   })}
                 >
-                  <Typography component="div" variant="overline" sx={{ color: primary.main }}>
+                  <Typography component="div" variant="h6" sx={{ color: primary.main }}>
                     {list.headline}
                   </Typography>
 

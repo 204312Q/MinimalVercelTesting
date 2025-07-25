@@ -85,7 +85,7 @@ function MemberCard({ feature }) {
           flexDirection: 'column',
         }}
       >
-        <Typography variant="subtitle1" sx={{ mt: 1, mb: 0.5 }}>
+        <Typography variant="h6" sx={{ mt: 1, mb: 0.5 }}>
           {feature.name}
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2.5 }}>

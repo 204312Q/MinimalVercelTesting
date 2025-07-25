@@ -103,10 +103,10 @@ function MemberCard({ packages }) {
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           {packages.description}
         </Typography>
-        <Typography variant="subtitle1" sx={{ mt: 1, mb: 0.5 }}>
+        <Typography variant="h6" sx={{ mt: 1, mb: 0.5 }}>
           {packages.name}
         </Typography>
-        <Typography variant="body2" sx={{ mb: 2.5, color: 'text.secondary' }}>
+        <Typography variant="body1" sx={{ mb: 2.5, color: 'text.secondary' }}>
           {packages.price}
         </Typography>
       </Box>
