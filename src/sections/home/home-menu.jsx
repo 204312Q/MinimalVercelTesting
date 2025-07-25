@@ -18,7 +18,7 @@ export function HomeMenu({ sx, ...other }) {
           zIndex: 9,
           height: { xs: 400, md: 500 },
           width: '95%',
-          backgroundImage: `url(${CONFIG.assetsDir}/assets/background/aboutus.png)`,
+          backgroundImage: `url(${CONFIG.assetsDir}/assets/background/Confinement_menu.jpg)`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',

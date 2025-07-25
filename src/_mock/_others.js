@@ -11,7 +11,7 @@ export const _carouselPackages = [
   {
     id: 1,
     name: '28 Days Dual Meal',
-    image: '/menu/product-1.webp',
+    image: '/menu/Nourishing_and_Beautifying_Black_Chicken_Soup.png',
     alt: '28 Days Dual Meal',
     description: 'Lunch and Dinner | $$/meal',
     price: '$1,768.00'
@@ -19,7 +19,7 @@ export const _carouselPackages = [
   {
     id: 2,
     name: '14 Days Dual Meal',
-    image: '/menu/product-2.webp',
+    image: '/menu/Pigs_Trotter_with_Ginger_Vinegar_and_Egg.png',
     alt: '14 Days Dual Meal',
     description: 'Lunch and Dinner | $$/meal',
     price: '$968.00'
@@ -27,7 +27,7 @@ export const _carouselPackages = [
   {
     id: 3,
     name: '7 Days Dual Meal',
-    image: '/menu/product-3.webp',
+    image: '/menu/He_Shou_Wu_Pork_Rib_Soup.png',
     alt: '7 Days Dual Meal',
     description: 'Lunch and Dinner | $$/meal',
     price: '$498.00'
@@ -54,7 +54,7 @@ export const _carouselBenefits = [
   {
     id: 3,
     name: 'Alchemy Fibre™ For healthier mum',
-    image: '/assets/benefitsImage/Benefit-3.webp',
+    image: '/assets/benefitsImage/Benefit-3.png',
     alt: 'Alchemy Fibre™ For healthier mum',
     size: 'contain',
     description: 'At Chilli Padi Confinement, we enhance our Fragrant White Rice with Alchemy Fibre™ for Rice, providing a healthier choice for new mothers. This revolutionary blend of low GI, high fibre, and prebiotics transforms white rice, significantly increasing its fibre content without compromising taste or texture.',
@@ -75,7 +75,7 @@ export const _carouselPromotion = [
     id: 2,
     name: 'BMB Packages',
     url: paths.product.root,
-    image: '/assets/feature/feature-1.webp',
+    image: '/assets/feature/feature-1.png',
     alt: 'BMB Packages',
     size: 'cover',
     description: 'BMB\'s team of certified professionals specializes in both Traditional Chinese Massage (TCM) and Javanese methods. Their proprietary massage strokes combine Javanese techniques and Meridian points, effectively decreasing swelling, relieving pain, and regulating hormones.',
@@ -84,7 +84,7 @@ export const _carouselPromotion = [
     id: 3,
     name: 'Baby Shower Catering',
     url: 'https://chilliapi.com.sg/catering/menu/baby-shower-buffet',
-    image: '/assets/feature/feature-2.png',
+    image: '/assets/feature/feature-2.jpg',
     alt: 'Baby Shower',
     size: 'cover',
     description: 'Our catering services go beyond just great food. We also offer thematic set-ups at an additional cost to make your baby shower even more special and memorable. Our team of experienced and professional caterers will work closely with you to ensure that your event is a success and that your guests are thoroughly impressed.',
