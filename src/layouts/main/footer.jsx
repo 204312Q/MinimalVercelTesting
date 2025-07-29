@@ -20,15 +20,20 @@ import { primary } from 'src/theme';
 
 const LINKS = [
   {
-    headline: 'Quick Links',
+    headline: 'Behind The Brand',
     children: [
       { name: 'Home', href: paths.about },
       { name: 'About us', href: paths.about },
+      { name: 'Articles', href: paths.about },
+      { name: 'Testimonials', href: paths.about },
+    ],
+  },
+  {
+    headline: 'Comfort For Mum',
+    children: [
       { name: 'View Weekly Menu', href: paths.about },
       { name: 'Confinement Packages', href: paths.about },
       { name: 'Baby Shower Celebration', href: paths.about },
-      { name: 'Articles', href: paths.about },
-      { name: 'Testimonials', href: paths.about },
       { name: 'FAQs', href: paths.about },
     ],
   }
@@ -74,18 +79,16 @@ export function Footer({ sx, layoutQuery = 'md', ...other }) {
           [theme.breakpoints.up(layoutQuery)]: { textAlign: 'unset' },
         })}
       >
-        <Logo />
-
         {/* <Typography variant="h6" sx={{ mt: 2 }}>
           Your Custom Footer Title
         </Typography> */}
-
         <Grid
           container
           sx={[
             (theme) => ({
-              mt: 3,
+              mt: 1,
               justifyContent: 'center',
+              alignItems: 'flex-start', // Add this to align items to top
               [theme.breakpoints.up(layoutQuery)]: { justifyContent: 'space-between' },
             }),
           ]}
@@ -93,16 +96,23 @@ export function Footer({ sx, layoutQuery = 'md', ...other }) {
           <Grid size={{ xs: 12, [layoutQuery]: 3 }} sx={(theme) => ({
             color: theme.vars.palette.primary.main,
           })}>
+            <Logo sx={{
+              width: 150, // Default is usually around 100px
+              height: 'auto'
+            }} />
+
             <Typography
               variant="body2"
               sx={(theme) => ({
                 mx: 'auto',
                 maxWidth: 280,
+                mt: 2, // Add margin top to separate from logo
                 [theme.breakpoints.up(layoutQuery)]: { mx: 'unset' },
               })}
             >
               3015 Bedok North Street 5, Shimei East Kitchen, #04-21, Singapore 486350
             </Typography>
+
 
             <Typography
               variant="body2"
@@ -183,35 +193,46 @@ export function Footer({ sx, layoutQuery = 'md', ...other }) {
                 [theme.breakpoints.up(layoutQuery)]: { flexDirection: 'row' },
               })}
             >
-              {LINKS.map((list) => (
-                <Box
-                  key={list.headline}
-                  sx={(theme) => ({
-                    gap: 2,
-                    width: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    flexDirection: 'column',
-                    [theme.breakpoints.up(layoutQuery)]: { alignItems: 'flex-start' },
-                  })}
-                >
-                  <Typography component="div" variant="h6" sx={{ color: primary.main }}>
-                    {list.headline}
-                  </Typography>
+              {/* LINKS Section - Stack vertically */}
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column', // Always stack vertically
+                  gap: 3,
+                  width: 1,
+                }}
+              >
+                {LINKS.map((list) => (
+                  <Box
+                    key={list.headline}
+                    sx={(theme) => ({
+                      gap: 2,
+                      display: 'flex',
+                      alignItems: 'center',
+                      flexDirection: 'column',
+                      [theme.breakpoints.up(layoutQuery)]: { alignItems: 'flex-start' },
+                    })}
+                  >
+                    <Typography component="div" variant="h6" sx={{ color: primary.main, mt: 0 }}>
+                      {list.headline}
+                    </Typography>
 
-                  {list.children.map((link) => (
-                    <Link
-                      key={link.name}
-                      component={RouterLink}
-                      href={link.href}
-                      color="inherit"
-                      variant="body2"
-                    >
-                      {link.name}
-                    </Link>
-                  ))}
-                </Box>
-              ))}
+                    {list.children.map((link) => (
+                      <Link
+                        key={link.name}
+                        component={RouterLink}
+                        href={link.href}
+                        color="inherit"
+                        variant="body2"
+                      >
+                        {link.name}
+                      </Link>
+                    ))}
+                  </Box>
+                ))}
+              </Box>
+
+              {/* INFO Section - Separate column */}
               {INFO.map((list) => (
                 <Box
                   key={list.headline}
