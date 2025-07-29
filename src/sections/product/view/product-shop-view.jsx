@@ -11,13 +11,13 @@ import { useCheckoutContext } from '../../checkout/context';
 // ----------------------------------------------------------------------
 
 export function ProductShopView({ products }) {
-  const { state: checkoutState } = useCheckoutContext();
+  // const { state: checkoutState } = useCheckoutContext();
 
   const productItems = products || [];
 
   return (
     <Container sx={{ mb: 15 }}>
-      <CartIcon totalItems={checkoutState.totalItems} />
+      {/* <CartIcon totalItems={checkoutState.totalItems} /> */}
 
       <Typography variant="h2" sx={{ my: { xs: 3, md: 5 } }}>
         Our Packages

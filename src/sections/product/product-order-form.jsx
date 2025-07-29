@@ -105,7 +105,7 @@ export function ProductOrderForm({ category, products }) {
                             </RadioGroup>
                         </FormControl>
 
-                        <Box sx={{ mt: 3 }}>
+                        {/* <Box sx={{ mt: 3 }}>
                             <Typography variant="subtitle1" gutterBottom>
                                 Special Request:
                             </Typography>
@@ -137,9 +137,9 @@ export function ProductOrderForm({ category, products }) {
                                     ))}
                                 </Grid>
                             </Grid>
-                        </Box>
+                        </Box> */}
 
-                        <TextField
+                        {/* <TextField
                             label="Notes:"
                             multiline
                             rows={3}
@@ -147,7 +147,7 @@ export function ProductOrderForm({ category, products }) {
                             sx={{ mt: 3 }}
                             value={notes}
                             onChange={(e) => setNotes(e.target.value)}
-                        />
+                        /> */}
                     </CardContent>
                 </Card>
             </Grid>

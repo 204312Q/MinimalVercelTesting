@@ -103,8 +103,8 @@ export function ProductList({ products = PRODUCT, loading, sx, ...other }) {
     >
       {/* Always show category cards */}
       {renderCategoryCards()}
-
       {/* Show order form below when category is selected */}
+
       {selectedCategory && (
         <Box sx={{ mt: 4 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
@@ -124,6 +124,8 @@ export function ProductList({ products = PRODUCT, loading, sx, ...other }) {
             category={selectedCategory}
             products={getProductsByCategory(selectedCategory.name)}
           />
+          {/* an accordion component for add-on selections */}
+          {/* an accordion component for special requests */}
         </Box>
       )}
     </Box>
