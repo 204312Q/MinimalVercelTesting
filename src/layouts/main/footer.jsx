@@ -12,10 +12,9 @@ import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
 import { _socials, _paymenttypes } from 'src/_mock';
-import { FacebookIcon, InstagramIcon } from 'src/assets/icons';
+import { FacebookIcon, InstagramIcon, TiktokIcon } from 'src/assets/icons';
 
 import { Logo } from 'src/components/logo';
-import { dir } from 'i18next';
 import { primary } from 'src/theme';
 // ----------------------------------------------------------------------
 
@@ -146,6 +145,7 @@ export function Footer({ sx, layoutQuery = 'md', ...other }) {
                 >
                   {social.value === 'facebook' && <FacebookIcon />}
                   {social.value === 'instagram' && <InstagramIcon />}
+                  {social.value === 'tiktok' && <TiktokIcon />}
                 </IconButton>
               ))}
             </Box>
@@ -166,7 +166,7 @@ export function Footer({ sx, layoutQuery = 'md', ...other }) {
               <Image
                 src="/logo/Chilli_padi_logo.png"
                 alt="Chilli Padi Nonya Catering"
-                width={60}
+                width={80}
                 height={120}
                 style={{ objectFit: 'contain' }}
               />

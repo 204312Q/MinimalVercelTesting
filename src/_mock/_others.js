@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { sizeof } from 'stylis';
 import { paths } from 'src/routes/paths';
 import { createChainableState } from '@tiptap/core';
+import { DesktopDatePicker } from '@mui/x-date-pickers';
 
 // ----------------------------------------------------------------------
 
@@ -121,6 +122,30 @@ export const _carouselPopularDish = [
   }
 ];
 
+export const _packageCategories = [
+  {
+    id: 1,
+    name: "Dual Meal",
+    description: "Lunch And Dinner",
+    image: "/menu/product-1.webp",
+    startingPrice: "498.00"
+  },
+  {
+    id: 2,
+    name: "Single Meal", 
+    description: "Lunch Or Dinner",
+    image: "/menu/product-1.webp",
+    startingPrice: "498.00"
+  },
+  {
+    id: 3,
+    name: "Trial Meal",
+    description: "Lunch Or Dinner", 
+    image: "/menu/product-1.webp",
+    startingPrice: "38.00"
+  }
+];
+
 // ----------------------------------------------------------------------
 
 export const _faqs = Array.from({ length: 8 }, (_, index) => ({
@@ -230,6 +255,11 @@ export const _socials = [
     value: 'instagram',
     label: 'Instagram',
     href: 'https://www.instagram.com/chillipadiconfinement/',
+  },
+  {
+    value: 'tiktok',
+    label: 'TikTok',
+    href: 'https://www.tiktok.com/@cpconfinement?is_from_webapp=1&sender_device=pc',
   }
 ];
 
@@ -243,11 +273,6 @@ export const _paymenttypes = [
     id: 2,
     value: 'Mastercard',
     image: '/payment/mastercard.svg',
-  },
-  {
-    id: 3,
-    value: 'UnionPay',
-    image: '/payment/unionpay.svg',
   }
 ];
     
