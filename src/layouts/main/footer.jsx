@@ -18,7 +18,7 @@ import { Logo } from 'src/components/logo';
 import { primary } from 'src/theme';
 // ----------------------------------------------------------------------
 
-const LINKS = [
+const BehindTheBrand = [
   {
     headline: 'Behind The Brand',
     children: [
@@ -28,6 +28,9 @@ const LINKS = [
       { name: 'Testimonials', href: paths.about },
     ],
   },
+]
+
+const ComfortForMum = [
   {
     headline: 'Comfort For Mum',
     children: [
@@ -88,200 +91,167 @@ export function Footer({ sx, layoutQuery = 'md', ...other }) {
             (theme) => ({
               mt: 1,
               justifyContent: 'center',
-              alignItems: 'flex-start', // Add this to align items to top
+              alignItems: 'flex-start',
               [theme.breakpoints.up(layoutQuery)]: { justifyContent: 'space-between' },
             }),
           ]}
         >
-          <Grid size={{ xs: 12, [layoutQuery]: 3 }} sx={(theme) => ({
+          {/* Column 1: Logo + Contact Info */}
+          <Grid size={{ xs: 12, [layoutQuery]: 4 }} sx={(theme) => ({
             color: theme.vars.palette.primary.main,
           })}>
-            <Logo sx={{
-              width: 150, // Default is usually around 100px
-              height: 'auto'
-            }} />
+            <Logo sx={{ width: 150, height: 'auto' }} />
 
-            <Typography
-              variant="body2"
-              sx={(theme) => ({
-                mx: 'auto',
-                maxWidth: 280,
-                mt: 2, // Add margin top to separate from logo
-                [theme.breakpoints.up(layoutQuery)]: { mx: 'unset' },
-              })}
-            >
+            <Typography variant="body2" sx={(theme) => ({
+              mx: 'auto', maxWidth: 280, mt: 2,
+              [theme.breakpoints.up(layoutQuery)]: { mx: 'unset' },
+            })}>
               3015 Bedok North Street 5, Shimei East Kitchen, #04-21, Singapore 486350
             </Typography>
 
-
-            <Typography
-              variant="body2"
-              sx={(theme) => ({
-                mx: 'auto',
-                maxWidth: 280,
-                mt: 1,
-                [theme.breakpoints.up(layoutQuery)]: { mx: 'unset' },
-              })}
-            >
+            <Typography variant="body2" sx={(theme) => ({
+              mx: 'auto', maxWidth: 280, mt: 1,
+              [theme.breakpoints.up(layoutQuery)]: { mx: 'unset' },
+            })}>
               Phone: 6914 9900
             </Typography>
-            <Typography
-              variant="body2"
-              sx={(theme) => ({
-                mx: 'auto',
-                maxWidth: 280,
-                [theme.breakpoints.up(layoutQuery)]: { mx: 'unset' },
-              })}
-            >
+
+            <Typography variant="body2" sx={(theme) => ({
+              mx: 'auto', maxWidth: 280,
+              [theme.breakpoints.up(layoutQuery)]: { mx: 'unset' },
+            })}>
               Email: confinement@chillipadi.com.sg
             </Typography>
-            <Box
-              sx={(theme) => ({
-                mt: 3,
-                mb: 5,
-                display: 'flex',
-                justifyContent: 'center',
-                [theme.breakpoints.up(layoutQuery)]: { mb: 0, justifyContent: 'flex-start' },
-              })}
-            >
+
+            {/* Social Icons */}
+            <Box sx={(theme) => ({
+              mt: 3, mb: 5, display: 'flex', justifyContent: 'center',
+              [theme.breakpoints.up(layoutQuery)]: { mb: 0, justifyContent: 'flex-start' },
+            })}>
               {_socials.map((social) => (
-                <IconButton
-                  key={social.label}
-                  component="a"
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={social.label}
-                >
+                <IconButton key={social.label} component="a" href={social.href} target="_blank">
                   {social.value === 'facebook' && <FacebookIcon />}
                   {social.value === 'instagram' && <InstagramIcon />}
                   {social.value === 'tiktok' && <TiktokIcon />}
                 </IconButton>
               ))}
             </Box>
-            <Box
-              sx={(theme) => ({
-                mt: 3,
-                mb: 5,
-                display: 'flex',
-                justifyContent: 'center',
-                flexDirection: 'column',
-                alignItems: 'center', // Center image on mobile
-                [theme.breakpoints.up(layoutQuery)]: { mb: 0, justifyContent: 'center', alignItems: 'flex-start' },
-              })}
-            >
-              <Typography component="div" variant="h6">
-                Affiliates
-              </Typography>
-              <Image
-                src="/logo/Chilli_padi_logo.png"
-                alt="Chilli Padi Nonya Catering"
-                width={80}
-                height={120}
-                style={{ objectFit: 'contain' }}
-              />
-            </Box>
 
+            {/* Affiliates */}
+            <Box sx={(theme) => ({
+              mt: 3, mb: 5, display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center',
+              [theme.breakpoints.up(layoutQuery)]: { mb: 0, alignItems: 'flex-start' },
+            })}>
+              <Typography component="div" variant="h6">Affiliates</Typography>
+              <Image src="/logo/Chilli_padi_logo.png" alt="Chilli Padi Nonya Catering" width={80} height={120} style={{ objectFit: 'contain' }} />
+            </Box>
           </Grid>
 
-          <Grid size={{ xs: 12, [layoutQuery]: 6 }}>
-            <Box
-              sx={(theme) => ({
-                gap: 5,
-                display: 'flex',
-                flexDirection: 'column',
-                [theme.breakpoints.up(layoutQuery)]: { flexDirection: 'row' },
-              })}
-            >
-              {/* LINKS Section - Stack vertically */}
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column', // Always stack vertically
-                  gap: 3,
-                  width: 1,
-                }}
-              >
-                {LINKS.map((list) => (
-                  <Box
-                    key={list.headline}
-                    sx={(theme) => ({
-                      gap: 2,
-                      display: 'flex',
-                      alignItems: 'center',
-                      flexDirection: 'column',
-                      [theme.breakpoints.up(layoutQuery)]: { alignItems: 'flex-start' },
-                    })}
-                  >
-                    <Typography component="div" variant="h6" sx={{ color: primary.main, mt: 0 }}>
-                      {list.headline}
-                    </Typography>
+          {/* Column 2: Links + Information (Combined) */}
+          <Grid size={{ xs: 12, [layoutQuery]: 8 }}>
+            <Box sx={(theme) => ({
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 4,
+              [theme.breakpoints.up(layoutQuery)]: {
+                flexDirection: 'row',
+                justifyContent: 'space-between'
+              },
+            })}>
 
-                    {list.children.map((link) => (
-                      <Link
-                        key={link.name}
-                        component={RouterLink}
-                        href={link.href}
-                        color="inherit"
-                        variant="body2"
-                      >
-                        {link.name}
-                      </Link>
-                    ))}
-                  </Box>
-                ))}
-              </Box>
-
-              {/* INFO Section - Separate column */}
-              {INFO.map((list) => (
-                <Box
-                  key={list.headline}
-                  sx={(theme) => ({
-                    gap: 2,
-                    width: 1,
+              {/* Behind The Brand */}
+              <Box sx={{ flex: 1 }}>
+                {BehindTheBrand.map((list) => (
+                  <Box key={list.headline} sx={(theme) => ({
                     display: 'flex',
                     alignItems: 'center',
                     flexDirection: 'column',
                     [theme.breakpoints.up(layoutQuery)]: { alignItems: 'flex-start' },
-                  })}
-                >
-                  <Typography component="div" variant="h6" sx={{ color: primary.main }}>
-                    {list.headline}
-                  </Typography>
+                  })}>
+                    <Typography component="div" variant="h6" sx={{ color: primary.main, mb: 2 }}>
+                      {list.headline}
+                    </Typography>
 
-                  {list.children.map((link) => (
-                    <Typography
-                      key={link.name}
-                      variant="body2"
-                      color="inherit"
-                      sx={{ mb: 1 }}
-                    >
-                      {link.name}
-                      {link.info &&
-                        (Array.isArray(link.info)
+                    <Box sx={(theme) => ({
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 1,
+                      alignItems: 'center',
+                      [theme.breakpoints.up(layoutQuery)]: { alignItems: 'flex-start' },
+                    })}>
+                      {list.children.map((link) => (
+                        <Link key={link.name} component={RouterLink} href={link.href} color="inherit" variant="body2">
+                          {link.name}
+                        </Link>
+                      ))}
+                    </Box>
+                  </Box>
+                ))}
+              </Box>
+
+              {/* Comfort For Mum */}
+              <Box sx={{ flex: 1 }}>
+                {ComfortForMum.map((list) => (
+                  <Box key={list.headline} sx={(theme) => ({
+                    display: 'flex',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                    [theme.breakpoints.up(layoutQuery)]: { alignItems: 'flex-start' },
+                  })}>
+                    <Typography component="div" variant="h6" sx={{ color: primary.main, mb: 2 }}>
+                      {list.headline}
+                    </Typography>
+
+                    <Box sx={(theme) => ({
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 1,
+                      alignItems: 'center',
+                      [theme.breakpoints.up(layoutQuery)]: { alignItems: 'flex-start' },
+                    })}>
+                      {list.children.map((link) => (
+                        <Link key={link.name} component={RouterLink} href={link.href} color="inherit" variant="body2">
+                          {link.name}
+                        </Link>
+                      ))}
+                    </Box>
+                  </Box>
+                ))}
+              </Box>
+
+              {/* Information */}
+              <Box sx={{ flex: 1 }}>
+                {INFO.map((list) => (
+                  <Box key={list.headline} sx={(theme) => ({
+                    gap: 2, display: 'flex', alignItems: 'center', flexDirection: 'column',
+                    [theme.breakpoints.up(layoutQuery)]: { alignItems: 'flex-start' },
+                  })}>
+                    <Typography component="div" variant="h6" sx={{ color: primary.main }}>
+                      {list.headline}
+                    </Typography>
+                    {list.children.map((link) => (
+                      <Typography key={link.name} variant="body2" color="inherit" sx={{ mb: 1 }}>
+                        {link.name}
+                        {link.info && (Array.isArray(link.info)
                           ? Object.entries(link.info[0]).map(([key, item]) => (
                             <span key={key} style={{ display: 'block' }}>{item}</span>
                           ))
                           : <span style={{ display: 'block' }}>{link.info}</span>
-                        )
-                      }
-                    </Typography>
-                  ))}
-                  <Box
-                    sx={(theme) => ({
-                      mb: 5,
-                      display: 'flex',
-                      justifyContent: 'center',
-                      gap: 2,
-                      [theme.breakpoints.up(layoutQuery)]: { mb: 0, justifyContent: 'flex-start' },
-                    })}
-                  >
-                    {_paymenttypes.map((payment) => (
-                      <Image key={payment.id} src={payment.image} alt={payment.value} width={40} height={40} />
+                        )}
+                      </Typography>
                     ))}
+                    <Box sx={(theme) => ({
+                      mb: 5, display: 'flex', justifyContent: 'center', gap: 2,
+                      [theme.breakpoints.up(layoutQuery)]: { mb: 0, justifyContent: 'flex-start' },
+                    })}>
+                      {_paymenttypes.map((payment) => (
+                        <Image key={payment.id} src={payment.image} alt={payment.value} width={40} height={40} />
+                      ))}
+                    </Box>
                   </Box>
-                </Box>
-              ))}
+                ))}
+              </Box>
+
             </Box>
           </Grid>
         </Grid>
