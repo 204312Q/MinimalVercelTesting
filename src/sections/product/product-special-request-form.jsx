@@ -1,0 +1,190 @@
+'use client';
+
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import Box from '@mui/material/Box';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Grid from '@mui/material/Grid';
+
+import { Iconify } from 'src/components/iconify';
+
+// Move outside component to prevent recreation
+const PRESET_REQUESTS = [
+    { id: 'sp-1', value: 'No Pork Innards', label: 'No Pork Innards' },
+    { id: 'sp-2', value: 'No Hong Zhao Chicken/Fish', label: 'No Hong Zhao Chicken/Fish' },
+    { id: 'sp-3', value: 'No Snow/Sweet Peas', label: 'No Snow/Sweet Peas' },
+    { id: 'sp-4', value: 'No Sugar In Red Dates Tea', label: 'No Sugar In Red Dates Tea' },
+];
+
+export function ProductSpecialRequestForm({ onRequestChange }) {
+    const [customRequests, setCustomRequests] = useState('');
+    const [presetRequests, setPresetRequests] = useState([]);
+    const [expanded, setExpanded] = useState(false);
+
+    // Memoize expensive calculations
+    const hasRequests = useMemo(() =>
+        presetRequests.length > 0 || customRequests.trim().length > 0,
+        [presetRequests.length, customRequests]
+    );
+
+    const totalRequests = useMemo(() => {
+        const presetLabels = presetRequests.map(value =>
+            PRESET_REQUESTS.find(req => req.value === value)?.label
+        ).filter(Boolean);
+
+        const allRequests = [...presetLabels];
+        if (customRequests.trim()) {
+            allRequests.push(customRequests.trim());
+        }
+
+        return allRequests.join('; ');
+    }, [presetRequests, customRequests]);
+
+    // Optimized event handlers
+    const handleCustomRequestChange = useCallback((e) => {
+        setCustomRequests(e.target.value);
+    }, []);
+
+    const handlePresetRequestChange = useCallback((requestValue) => {
+        setPresetRequests(prev =>
+            prev.includes(requestValue)
+                ? prev.filter(val => val !== requestValue)
+                : [...prev, requestValue]
+        );
+    }, []);
+
+    const handleAccordionChange = useCallback((event, isExpanded) => {
+        setExpanded(isExpanded);
+    }, []);
+
+    // Notify parent only when totalRequests changes
+    useEffect(() => {
+        if (onRequestChange) {
+            onRequestChange(totalRequests);
+        }
+    }, [totalRequests, onRequestChange]);
+
+    return (
+        <Box sx={{
+            mt: 2,
+            borderTop: '5px solid #F27C96',
+            borderRadius: '4px 4px 0px 0px',
+            boxShadow: 2
+        }}>
+            <Accordion
+                expanded={expanded}
+                onChange={handleAccordionChange}
+                sx={{
+                    '&:before': {
+                        display: 'none',
+                    },
+                }}
+            >
+                <AccordionSummary
+                    expandIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
+                    sx={{
+                        py: 0.5,
+                        '& .MuiAccordionSummary-content': {
+                            alignItems: 'center',
+                        }
+                    }}
+                >
+                    <Typography variant="h6" sx={{ ml: 1 }}>
+                        Special Requests {hasRequests && `(${presetRequests.length + (customRequests.trim() ? 1 : 0)})`}
+                    </Typography>
+                </AccordionSummary>
+
+                <AccordionDetails sx={{ pt: 0, pb: 3 }}>
+                    {/* Preset Checkboxes */}
+                    <Box sx={{ mb: 3 }}>
+                        <Grid container spacing={1}>
+                            {PRESET_REQUESTS.map((request) => (
+                                <Grid item xs={6} sm={4} key={request.id}>
+                                    <PresetRequestCheckbox
+                                        request={request}
+                                        checked={presetRequests.includes(request.value)}
+                                        onChange={handlePresetRequestChange}
+                                    />
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </Box>
+
+                    {/* Custom Notes */}
+                    <Box>
+                        <Typography variant="subtitle2" gutterBottom sx={{ mb: 1 }}>
+                            Notes:
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            multiline
+                            rows={3}
+                            variant="outlined"
+                            placeholder="Enter any additional special requests here..."
+                            value={customRequests}
+                            onChange={handleCustomRequestChange}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    '& fieldset': {
+                                        borderColor: 'grey.300',
+                                    },
+                                    '&:hover fieldset': {
+                                        borderColor: 'primary.main',
+                                    },
+                                    '&.Mui-focused fieldset': {
+                                        borderColor: 'primary.main',
+                                    },
+                                },
+                            }}
+                        />
+                    </Box>
+
+                    {customRequests && (
+                        <Box sx={{ mt: 2, p: 1.5, backgroundColor: 'grey.50', borderRadius: 1 }}>
+                            <Typography variant="caption" color="text.secondary">
+                                Character count: {customRequests.length}
+                            </Typography>
+                        </Box>
+                    )}
+                </AccordionDetails>
+            </Accordion>
+        </Box>
+    );
+}
+
+// Separate component to prevent unnecessary re-renders
+const PresetRequestCheckbox = ({ request, checked, onChange }) => {
+    const handleChange = useCallback(() => {
+        onChange(request.value);
+    }, [onChange, request.value]);
+
+    return (
+        <FormControlLabel
+            control={
+                <Checkbox
+                    checked={checked}
+                    onChange={handleChange}
+                    size="small"
+                    value={request.value}
+                />
+            }
+            label={
+                <Typography variant="body2">
+                    {request.label}
+                </Typography>
+            }
+            sx={{
+                width: '100%',
+                m: 0,
+                '& .MuiFormControlLabel-label': {
+                    fontSize: '0.875rem'
+                }
+            }}
+        />
+    );
+};

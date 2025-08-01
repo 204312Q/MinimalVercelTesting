@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -10,204 +10,274 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import TextField from '@mui/material/TextField';
 import Checkbox from '@mui/material/Checkbox';
-import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid2';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+import CircularProgress from '@mui/material/CircularProgress';
+import dayjs from 'dayjs';
 
-export function ProductOrderForm({ category, products }) {
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
+import { getBundlesForProduct } from 'src/actions/product-ssr';
+
+export function ProductOrderForm({ category, products, onOrderChange }) {
     const [selectedProduct, setSelectedProduct] = useState('');
-    const [bundleWithMassage, setBundleWithMassage] = useState(false);
-    const [confirmedDate, setConfirmedDate] = useState('');
-    const [selectDate, setSelectDate] = useState('');
+    const [availableBundles, setAvailableBundles] = useState([]);
+    const [selectedBundles, setSelectedBundles] = useState([]);
+    const [dateType, setDateType] = useState('confirmed');
+    const [selectedDate, setSelectedDate] = useState(null);
     const [startWith, setStartWith] = useState('lunch');
-    const [specialRequests, setSpecialRequests] = useState({});
-    const [notes, setNotes] = useState('');
+    const [bundleLoading, setBundleLoading] = useState(false);
 
-    const handleSpecialRequestChange = (request, checked) => {
-        setSpecialRequests(prev => ({
-            ...prev,
-            [request]: checked
-        }));
-    };
+    // Memoized values
+    const isTrialMeal = useMemo(() => category?.name === "Trial Meal", [category?.name]);
 
-    const selectedProductData = products.find(p => p.product_id.toString() === selectedProduct);
-    const subtotal = selectedProductData ? selectedProductData.price : 0;
+    const selectedProductData = useMemo(() =>
+        products.find(p => p.product_id.toString() === selectedProduct),
+        [products, selectedProduct]
+    );
+
+    const { selectedBundleData, bundlePrice } = useMemo(() => {
+        const bundles = availableBundles.filter(bundle =>
+            selectedBundles.includes(bundle.product_id)
+        );
+        const price = bundles.reduce((sum, bundle) => sum + bundle.price, 0);
+
+        return { selectedBundleData: bundles, bundlePrice: price };
+    }, [availableBundles, selectedBundles]);
+
+    const orderData = useMemo(() => {
+        if (!selectedProductData) return null;
+
+        const basePrice = selectedProductData.price;
+        const totalPrice = basePrice + bundlePrice;
+        const isValidOrder = !!(selectedProductData && selectedDate);
+
+        return {
+            selectedProduct: selectedProductData,
+            selectedBundles: selectedBundleData,
+            bundlePrice,
+            totalPrice,
+            dateType,
+            selectedDate,
+            startWith,
+            category: category?.name,
+            isValidOrder
+        };
+    }, [selectedProductData, selectedBundleData, bundlePrice, dateType, selectedDate, startWith, category?.name]);
+
+    // Optimized fetch function
+    const fetchBundles = useCallback(async (productId) => {
+        setBundleLoading(true);
+        try {
+            const bundles = await getBundlesForProduct(productId);
+            setAvailableBundles(bundles);
+        } catch (error) {
+            console.error('Failed to fetch bundles:', error);
+            setAvailableBundles([]);
+        } finally {
+            setBundleLoading(false);
+        }
+    }, []);
+
+    // Effects
+    useEffect(() => {
+        if (selectedProduct) {
+            fetchBundles(selectedProduct);
+        } else {
+            setAvailableBundles([]);
+            setSelectedBundles([]);
+        }
+    }, [selectedProduct, fetchBundles]);
+
+    useEffect(() => {
+        if (orderData && onOrderChange) {
+            onOrderChange(orderData);
+        }
+    }, [orderData, onOrderChange]);
+
+    // Optimized event handlers
+    const handleProductChange = useCallback((e) => {
+        setSelectedProduct(e.target.value);
+        setSelectedBundles([]);
+    }, []);
+
+    const handleBundleChange = useCallback((bundleId, checked) => {
+        setSelectedBundles(prev =>
+            checked
+                ? [...prev, bundleId]
+                : prev.filter(id => id !== bundleId)
+        );
+    }, []);
+
+    const handleDateTypeChange = useCallback((e) => {
+        setDateType(e.target.value);
+    }, []);
+
+    const handleDateChange = useCallback((newValue) => {
+        if (newValue) {
+            const dateString = newValue.format('YYYY-MM-DD');
+            setSelectedDate(dateString);
+        } else {
+            setSelectedDate(null);
+        }
+    }, []);
+
+    const handleStartWithChange = useCallback((e) => {
+        setStartWith(e.target.value);
+    }, []);
 
     return (
-        <Grid container spacing={3}>
-            <Grid size={{ xs: 12, md: 8 }}>
-                <Card>
-                    <CardContent>
-                        <Typography variant="h6" gutterBottom>
-                            Package Selected: {category?.name}
-                        </Typography>
+        <Card sx={{
+            borderTop: '5px solid #F27C96',
+            borderRadius: '4px 4px 0 0',
+            mb: 3
+        }}>
+            <CardContent>
+                <Typography variant="h6" gutterBottom>
+                    Package Selected: {category?.name}
+                </Typography>
 
-                        <FormControl component="fieldset" sx={{ mt: 2 }}>
-                            <FormLabel component="legend">Select Days:</FormLabel>
-                            <RadioGroup
-                                value={selectedProduct}
-                                onChange={(e) => setSelectedProduct(e.target.value)}
-                            >
-                                {products.map((product) => (
-                                    <FormControlLabel
-                                        key={product.product_id}
-                                        value={product.product_id.toString()}
-                                        control={<Radio />}
-                                        label={`${product.duration} Days - $${product.price}`}
-                                    />
-                                ))}
-                            </RadioGroup>
-                        </FormControl>
-
-                        <Box sx={{ mt: 3 }}>
-                            <Typography variant="subtitle1" gutterBottom>
-                                Bundle with:
-                            </Typography>
+                {/* Product Selection */}
+                <FormControl component="fieldset" sx={{ mt: 2 }}>
+                    <FormLabel component="legend">Select Days:</FormLabel>
+                    <RadioGroup value={selectedProduct} onChange={handleProductChange}>
+                        {products.map((product) => (
                             <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={bundleWithMassage}
-                                        onChange={(e) => setBundleWithMassage(e.target.checked)}
-                                    />
-                                }
-                                label="BMB Massage Package"
+                                key={product.product_id}
+                                value={product.product_id.toString()}
+                                control={<Radio />}
+                                label={`${product.duration} Days - $${product.price}`}
                             />
-                        </Box>
+                        ))}
+                    </RadioGroup>
+                </FormControl>
 
-                        <Box sx={{ mt: 3, display: 'flex', gap: 2 }}>
-                            <TextField
-                                label="Confirmed Date/E.D.D:"
-                                type="date"
-                                value={confirmedDate}
-                                onChange={(e) => setConfirmedDate(e.target.value)}
-                                InputLabelProps={{ shrink: true }}
-                                sx={{ flex: 1 }}
-                            />
-                            <TextField
-                                label="Select Date:"
-                                type="date"
-                                value={selectDate}
-                                onChange={(e) => setSelectDate(e.target.value)}
-                                InputLabelProps={{ shrink: true }}
-                                sx={{ flex: 1 }}
-                            />
-                        </Box>
+                {/* Bundle Section with Loading */}
+                {selectedProduct && (bundleLoading || availableBundles.length > 0) && (
+                    <Box sx={{
+                        mt: 3,
+                        border: '2px solid #F27C96',
+                        borderRadius: '8px',
+                        padding: 2,
+                        backgroundColor: '#FFF5F7',
+                        position: 'relative',
+                        minHeight: bundleLoading ? 80 : 'auto'
+                    }}>
+                        <Typography variant="subtitle1" gutterBottom sx={{
+                            color: '#F27C96',
+                            fontWeight: 'bold'
+                        }}>
+                            Bundle with:
+                        </Typography>
 
-                        <FormControl component="fieldset" sx={{ mt: 3 }}>
-                            <FormLabel component="legend">Start With:</FormLabel>
-                            <RadioGroup
-                                value={startWith}
-                                onChange={(e) => setStartWith(e.target.value)}
-                            >
-                                <FormControlLabel value="lunch" control={<Radio />} label="Lunch" />
-                                <FormControlLabel value="dinner" control={<Radio />} label="Dinner" />
-                            </RadioGroup>
+                        {bundleLoading ? (
+                            <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
+                                <CircularProgress size={24} sx={{ color: '#F27C96' }} />
+                            </Box>
+                        ) : (
+                            availableBundles.map((bundle) => (
+                                <FormControlLabel
+                                    key={bundle.product_id}
+                                    control={
+                                        <Checkbox
+                                            checked={selectedBundles.includes(bundle.product_id)}
+                                            onChange={(e) => handleBundleChange(bundle.product_id, e.target.checked)}
+                                            sx={{
+                                                color: '#F27C96',
+                                                '&.Mui-checked': { color: '#F27C96' },
+                                            }}
+                                        />
+                                    }
+                                    label={
+                                        <Box sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                            width: '100%'
+                                        }}>
+                                            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                                                {bundle.name}
+                                            </Typography>
+                                            <Typography variant="body2" sx={{
+                                                color: '#F27C96',
+                                                fontWeight: 'bold',
+                                                ml: 2
+                                            }}>
+                                                +${bundle.price}
+                                            </Typography>
+                                        </Box>
+                                    }
+                                    sx={{ display: 'flex', mb: 1, width: '100%', m: 0 }}
+                                />
+                            ))
+                        )}
+
+                        <Box sx={{
+                            position: 'absolute',
+                            top: -8,
+                            right: 8,
+                            backgroundColor: '#F27C96',
+                            color: 'white',
+                            px: 1,
+                            py: 0.5,
+                            borderRadius: '4px',
+                            fontSize: '0.75rem',
+                            fontWeight: 'bold'
+                        }}>
+                            SPECIAL
+                        </Box>
+                    </Box>
+                )}
+
+                {/* Date Selection */}
+                <Box sx={{ mt: 3 }}>
+                    <FormLabel component="legend" sx={{
+                        mb: 2,
+                        display: 'block',
+                        color: 'text.primary',
+                        fontSize: '1rem',
+                        fontWeight: 'medium'
+                    }}>
+                        Select Date <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
+                    </FormLabel>
+                    <Box sx={{ display: 'flex', gap: 2 }}>
+                        <FormControl sx={{ flex: 1 }}>
+                            <InputLabel>Date Type</InputLabel>
+                            <Select value={dateType} label="Date Type" onChange={handleDateTypeChange}>
+                                <MenuItem value="confirmed">Confirmed Start Date</MenuItem>
+                                {!isTrialMeal && (
+                                    <MenuItem value="edd">E.D.D</MenuItem>
+                                )}
+                            </Select>
                         </FormControl>
 
-                        {/* <Box sx={{ mt: 3 }}>
-                            <Typography variant="subtitle1" gutterBottom>
-                                Special Request:
-                            </Typography>
-                            <Grid container>
-                                <Grid size={6}>
-                                    {['No Alcohol', 'Special Request 1', 'Special Request 2', 'Special Request 3'].map((request) => (
-                                        <FormControlLabel
-                                            key={request}
-                                            control={
-                                                <Checkbox
-                                                    onChange={(e) => handleSpecialRequestChange(request, e.target.checked)}
-                                                />
-                                            }
-                                            label={request}
-                                        />
-                                    ))}
-                                </Grid>
-                                <Grid size={6}>
-                                    {['No Pork Liver', 'Special Request 4', 'Special Request 5', 'Special Request 6'].map((request) => (
-                                        <FormControlLabel
-                                            key={request}
-                                            control={
-                                                <Checkbox
-                                                    onChange={(e) => handleSpecialRequestChange(request, e.target.checked)}
-                                                />
-                                            }
-                                            label={request}
-                                        />
-                                    ))}
-                                </Grid>
-                            </Grid>
-                        </Box> */}
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DatePicker
+                                label={`${dateType === 'confirmed' ? 'Confirmed Date' : 'E.D.D Date'} *`}
+                                value={selectedDate ? dayjs(selectedDate) : null}
+                                onChange={handleDateChange}
+                                slotProps={{
+                                    textField: { sx: { flex: 1 } },
+                                }}
+                                minDate={dayjs()}
+                            />
+                        </LocalizationProvider>
+                    </Box>
+                </Box>
 
-                        {/* <TextField
-                            label="Notes:"
-                            multiline
-                            rows={3}
-                            fullWidth
-                            sx={{ mt: 3 }}
-                            value={notes}
-                            onChange={(e) => setNotes(e.target.value)}
-                        /> */}
-                    </CardContent>
-                </Card>
-            </Grid>
-
-            <Grid size={{ xs: 12, md: 4 }}>
-                <Card>
-                    <CardContent>
-                        <Typography variant="h6" gutterBottom>
-                            Order summary
-                        </Typography>
-
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                            <Typography>Subtotal</Typography>
-                            <Typography>${subtotal}</Typography>
-                        </Box>
-
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                            <Typography>Discount</Typography>
-                            <Typography>-</Typography>
-                        </Box>
-
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2, fontWeight: 'bold' }}>
-                            <Typography>Total</Typography>
-                            <Typography color="error">${subtotal}</Typography>
-                        </Box>
-
-                        <Typography variant="caption" display="block" gutterBottom>
-                            (GST included)
-                        </Typography>
-
-                        <TextField
-                            placeholder="DISCOUNT5"
-                            size="small"
-                            fullWidth
-                            sx={{ mt: 1, mb: 1 }}
-                        />
-                        <Button variant="outlined" size="small" fullWidth sx={{ mb: 2 }}>
-                            Apply
-                        </Button>
-
-                        <Button
-                            variant="contained"
-                            fullWidth
-                            size="large"
-                            sx={{ backgroundColor: 'primary.main' }}
-                        >
-                            Proceed to Order
-                        </Button>
-
-                        <Box sx={{ mt: 3 }}>
-                            <Typography variant="subtitle2" gutterBottom>
-                                Please Note:
-                            </Typography>
-                            <Typography variant="caption">
-                                For E.D.D selection/new order/next day activation/meal postponement and etc, we would need 1 working day's notice (before 2PM) for delivery on weekdays or 2 working day's notice (before 2PM) for delivery on weekends and public holidays. Order confirmation after operating hours would require 2 working day's notice. Additional $20/trip for delivery to Sentosa. Do check with our team for menu schedules.
-                            </Typography>
-                        </Box>
-                    </CardContent>
-                </Card>
-            </Grid>
-        </Grid>
+                {/* Start With Options */}
+                <FormControl component="fieldset" sx={{ mt: 3 }}>
+                    <FormLabel component="legend">Start With:</FormLabel>
+                    <RadioGroup value={startWith} onChange={handleStartWithChange}>
+                        <FormControlLabel value="lunch" control={<Radio />} label="Lunch" />
+                        <FormControlLabel value="dinner" control={<Radio />} label="Dinner" />
+                    </RadioGroup>
+                </FormControl>
+            </CardContent>
+        </Card>
     );
 }

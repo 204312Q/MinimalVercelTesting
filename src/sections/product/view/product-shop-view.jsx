@@ -3,27 +3,33 @@
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
-import { CartIcon } from '../cart-icon';
 import { ProductList } from '../product-list';
 import { useCheckoutContext } from '../../checkout/context';
 
-
 // ----------------------------------------------------------------------
 
-export function ProductShopView({ products }) {
+export function ProductShopView({ packages, addons }) {
   // const { state: checkoutState } = useCheckoutContext();
 
-  const productItems = products || [];
+  const productItems = packages || [];
+  const addonItems = addons || [];
 
   return (
     <Container sx={{ mb: 15 }}>
       {/* <CartIcon totalItems={checkoutState.totalItems} /> */}
 
-      <Typography variant="h2" sx={{ my: { xs: 3, md: 5 } }}>
+      <Typography
+        variant="h2"
+        sx={{
+          my: { xs: 3, md: 5 },
+          textAlign: 'center', // Center the text
+          color: 'primary.main' // Use primary color
+        }}
+      >
         Our Packages
       </Typography>
 
-      <ProductList products={productItems} />
+      <ProductList packages={productItems} addons={addonItems} />
 
     </Container>
   );

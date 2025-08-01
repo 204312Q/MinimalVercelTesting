@@ -127,21 +127,21 @@ export const _packageCategories = [
     id: 1,
     name: "Dual Meal",
     description: "Lunch And Dinner",
-    image: "/menu/product-1.webp",
+    image: "/menu/HakkaYellowWineChickenwithBlackFungus_360x.webp",
     startingPrice: "498.00"
   },
   {
     id: 2,
     name: "Single Meal", 
     description: "Lunch Or Dinner",
-    image: "/menu/product-1.webp",
+    image: "/menu/Pigs_Trotter_with_Ginger_Vinegar_and_Egg.webp",
     startingPrice: "498.00"
   },
   {
     id: 3,
     name: "Trial Meal",
     description: "Lunch Or Dinner", 
-    image: "/menu/product-1.webp",
+    image: "/menu/product-2.webp",
     startingPrice: "38.00"
   }
 ];
