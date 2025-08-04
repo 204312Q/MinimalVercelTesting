@@ -16,9 +16,16 @@ import { Iconify } from 'src/components/iconify';
 // Move outside component to prevent recreation
 const PRESET_REQUESTS = [
     { id: 'sp-1', value: 'No Pork Innards', label: 'No Pork Innards' },
-    { id: 'sp-2', value: 'No Hong Zhao Chicken/Fish', label: 'No Hong Zhao Chicken/Fish' },
-    { id: 'sp-3', value: 'No Snow/Sweet Peas', label: 'No Snow/Sweet Peas' },
-    { id: 'sp-4', value: 'No Sugar In Red Dates Tea', label: 'No Sugar In Red Dates Tea' },
+    { id: 'sp-2', value: 'No Pig Trotter', label: 'No Pig Trotter' },
+    { id: 'sp-3', value: 'No Chicken/Fish', label: 'No Chicken/Fish' },
+    { id: 'sp-4', value: 'No Chicken & Egg for first 1 or 2 weeks', label: 'No Chicken & Egg for the first 1 or 2 weeks' },
+    { id: 'sp-5', value: 'No Papaya Fish Soup', label: 'No Papaya Fish Soup' },
+    { id: 'sp-6', value: 'No Salmon', label: 'No Salmon' },
+    { id: 'sp-7', value: 'All White Rice', label: 'All White Rice' },
+    { id: 'sp-8', value: 'All Brown Rice', label: 'All Brown Rice' },
+    { id: 'sp-9', value: 'No Snow/Sweet Peas', label: 'No Snow/Sweet Peas' },
+    { id: 'sp-10', value: 'No Sugar in Red Dates Tea', label: 'No Sugar in Red Dates Tea' },
+    { id: 'sp-11', value: 'No Weekend Deliveries', label: 'No Weekend Deliveries' },
 ];
 
 export function ProductSpecialRequestForm({ onRequestChange }) {
