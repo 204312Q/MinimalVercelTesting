@@ -1,7 +1,11 @@
-import { SimpleLayout } from 'src/layouts/simple';
+import { MainLayout } from 'src/layouts/main';
 
 // ----------------------------------------------------------------------
 
 export default function Layout({ children }) {
-  return <SimpleLayout>{children}</SimpleLayout>;
+  return (
+    <MainLayout>
+      {children}
+    </MainLayout>
+  );
 }

@@ -23,7 +23,7 @@ const LoadingComponent = () => (
   </Box>
 );
 
-export function ProductList({ packages = [], addons = [], loading, sx, ...other }) {
+export function ProductList({ packages = [], addons = [], onProceedToOrder, loading, sx, ...other }) {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedAddOns, setSelectedAddOns] = useState([]);
   const [orderData, setOrderData] = useState(null);
@@ -58,6 +58,16 @@ export function ProductList({ packages = [], addons = [], loading, sx, ...other 
     setOrderData(null);
     setSpecialRequests('');
   }, []);
+
+  // Handle proceed to order - directly pass the final order to context
+  const handleProceedToOrder = useCallback((finalOrder) => {
+    if (!onProceedToOrder) return;
+
+    console.log('Processing order:', finalOrder);
+
+    // Directly pass the final order to the context
+    onProceedToOrder(finalOrder);
+  }, [onProceedToOrder]);
 
   // Auto-scroll when category is selected
   useEffect(() => {
@@ -184,6 +194,7 @@ export function ProductList({ packages = [], addons = [], loading, sx, ...other 
                 orderData={orderData}
                 selectedAddOns={selectedAddOns}
                 specialRequests={specialRequests}
+                onProceedToOrder={handleProceedToOrder}
               />
             </Box>
           </Box>

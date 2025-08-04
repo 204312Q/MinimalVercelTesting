@@ -1,23 +1,19 @@
-'use client';
-
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
 import { ProductList } from '../product-list';
-import { useCheckoutContext } from '../../checkout/context';
+import { useProductOrderContext } from '../context';
 
 // ----------------------------------------------------------------------
 
 export function ProductShopView({ packages, addons }) {
-  // const { state: checkoutState } = useCheckoutContext();
+  const { onProceedToOrder } = useProductOrderContext();
 
   const productItems = packages || [];
   const addonItems = addons || [];
 
   return (
     <Container sx={{ mb: 15 }}>
-      {/* <CartIcon totalItems={checkoutState.totalItems} /> */}
-
       <Typography
         variant="h2"
         sx={{
@@ -29,7 +25,7 @@ export function ProductShopView({ packages, addons }) {
         Our Packages
       </Typography>
 
-      <ProductList packages={productItems} addons={addonItems} />
+      <ProductList packages={productItems} addons={addonItems} onProceedToOrder={onProceedToOrder} />
 
     </Container>
   );

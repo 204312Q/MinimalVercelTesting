@@ -57,13 +57,16 @@ export function ProductOrderSummary({
         category: selectedCategory?.name,
         product: orderData?.selectedProduct,
         addOns: selectedAddOns,
+        selectedBundles: orderData?.selectedBundles || [],
         specialRequests: specialRequests,
-        bundleWithMassage: orderData?.bundleWithMassage || false,
         dateType: orderData?.dateType,
         selectedDate: orderData?.selectedDate,
         startWith: orderData?.startWith,
-        pricing: pricingData
-    }), [selectedCategory, orderData, selectedAddOns, specialRequests, pricingData]);
+        pricing: {
+            ...pricingData,
+            appliedPromo: appliedPromo // Include the applied promo information
+        }
+    }), [selectedCategory, orderData, selectedAddOns, specialRequests, pricingData, appliedPromo]);
 
     // Optimized event handlers
     const handlePromoCodeChange = useCallback((e) => {
@@ -95,7 +98,6 @@ export function ProductOrderSummary({
     }, []);
 
     const handleProceedClick = useCallback(() => {
-        console.log('Final Order:', finalOrder);
 
         if (onProceedToOrder) {
             onProceedToOrder(finalOrder);
