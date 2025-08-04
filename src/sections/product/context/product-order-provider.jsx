@@ -69,8 +69,10 @@ export function ProductOrderProvider({ children }) {
 
             setState(orderData);
 
-            // Redirect to home page
-            router.push('/payment');
+            // Only redirect on client side to avoid SSR issues
+            if (typeof window !== 'undefined') {
+                router.push('/payment');
+            }
 
         } catch (error) {
             console.error('Error saving order to local storage:', error);
