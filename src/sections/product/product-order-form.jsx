@@ -244,39 +244,44 @@ export function ProductOrderForm({ category, products, onOrderChange }) {
                     }}>
                         Select Date <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
                     </FormLabel>
-                    <Box sx={{ display: 'flex', gap: 2 }}>
-                        <FormControl sx={{ flex: 1 }}>
-                            <InputLabel>Date Type</InputLabel>
-                            <Select value={dateType} label="Date Type" onChange={handleDateTypeChange}>
-                                <MenuItem value="confirmed">Confirmed Start Date</MenuItem>
-                                {!isTrialMeal && (
-                                    <MenuItem value="edd">E.D.D</MenuItem>
-                                )}
-                            </Select>
-                        </FormControl>
-
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker
-                                label={`${dateType === 'confirmed' ? 'Confirmed Date' : 'E.D.D Date'} *`}
-                                value={selectedDate ? dayjs(selectedDate) : null}
-                                onChange={handleDateChange}
-                                slotProps={{
-                                    textField: { sx: { flex: 1 } },
-                                }}
-                                minDate={dayjs()}
+                    <FormControl component="fieldset" sx={{ width: '100%' }}>
+                        <FormLabel component="legend">Date Type</FormLabel>
+                        <RadioGroup value={dateType} onChange={handleDateTypeChange}>
+                            <FormControlLabel 
+                                value="confirmed" 
+                                control={<Radio />} 
+                                label="Confirmed Start Date" 
                             />
-                        </LocalizationProvider>
-                    </Box>
-                </Box>
+                            {!isTrialMeal && (
+                                <FormControlLabel 
+                                    value="edd" 
+                                    control={<Radio />} 
+                                    label="E.D.D" 
+                                />
+                            )}
+                        </RadioGroup>
+                    </FormControl>
 
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                            label={`${dateType === 'confirmed' ? 'Confirmed Date' : 'E.D.D Date'} *`}
+                            value={selectedDate ? dayjs(selectedDate) : null}
+                            onChange={handleDateChange}
+                            slotProps={{
+                                textField: { sx: { width: '50%', mt: 2 } },
+                            }}
+                            minDate={dayjs()}
+                        />
+                    </LocalizationProvider>
+                </Box>
                 {/* Start With Options */}
-                <FormControl component="fieldset" sx={{ mt: 3 }}>
+                {/* <FormControl component="fieldset" sx={{ mt: 3 }}>
                     <FormLabel component="legend">Start With:</FormLabel>
                     <RadioGroup value={startWith} onChange={handleStartWithChange}>
                         <FormControlLabel value="lunch" control={<Radio />} label="Lunch" />
                         <FormControlLabel value="dinner" control={<Radio />} label="Dinner" />
                     </RadioGroup>
-                </FormControl>
+                </FormControl> */}
             </CardContent>
         </Card>
     );

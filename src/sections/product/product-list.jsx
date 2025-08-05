@@ -163,6 +163,7 @@ export function ProductList({ packages = [], addons = [], onProceedToOrder, load
               flex: { xs: 1, md: 2 },
               width: '100%'
             }}>
+
               <ProductOrderForm
                 key={`order-${selectedCategory.id}`}
                 category={selectedCategory}

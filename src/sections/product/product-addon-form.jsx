@@ -265,7 +265,7 @@ export function ProductAddOnForm({ addOnItems = [], onAddOnChange }) {
                     })}
                 </Box>
 
-                {/* Selected Add-Ons Summary */}
+                {/* Selected Add-Ons Summary
                 {selectedAddOns.length > 0 && (
                     <Box sx={{ mt: 3, p: 2, backgroundColor: 'grey.50', borderRadius: 1 }}>
                         <Typography variant="subtitle1" gutterBottom>
@@ -286,7 +286,7 @@ export function ProductAddOnForm({ addOnItems = [], onAddOnChange }) {
                             </Typography>
                         </Box>
                     </Box>
-                )}
+                )} */}
             </CardContent>
         </Card>
     );

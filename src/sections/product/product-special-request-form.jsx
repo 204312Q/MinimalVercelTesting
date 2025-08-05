@@ -106,49 +106,56 @@ export function ProductSpecialRequestForm({ onRequestChange }) {
                     </Typography>
                 </AccordionSummary>
 
-                <AccordionDetails sx={{ pt: 0, pb: 3 }}>
+                <AccordionDetails sx={{ pt: 0, pb: 3, px: 3 }}>
                     {/* Preset Checkboxes */}
                     <Box sx={{ mb: 3 }}>
-                        <Grid container spacing={1}>
-                            {PRESET_REQUESTS.map((request) => (
-                                <Grid item xs={6} sm={4} key={request.id}>
-                                    <PresetRequestCheckbox
-                                        request={request}
-                                        checked={presetRequests.includes(request.value)}
-                                        onChange={handlePresetRequestChange}
-                                    />
-                                </Grid>
-                            ))}
-                        </Grid>
+                        <Typography variant="subtitle2" gutterBottom sx={{ mb: 2, color: 'primary.darker', pl: 0 }}>
+                            Exclude the Following:
+                        </Typography>
+                        <Box sx={{ pl: 0 }}>
+                            <Grid container spacing={1}>
+                                {PRESET_REQUESTS.map((request) => (
+                                    <Grid item xs={6} sm={4} key={request.id}>
+                                        <PresetRequestCheckbox
+                                            request={request}
+                                            checked={presetRequests.includes(request.value)}
+                                            onChange={handlePresetRequestChange}
+                                        />
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </Box>
                     </Box>
 
                     {/* Custom Notes */}
                     <Box>
-                        <Typography variant="subtitle2" gutterBottom sx={{ mb: 1 }}>
+                        <Typography variant="subtitle2" gutterBottom sx={{ mb: 2, pl: 0 }}>
                             Notes:
                         </Typography>
-                        <TextField
-                            fullWidth
-                            multiline
-                            rows={3}
-                            variant="outlined"
-                            placeholder="Enter any additional special requests here..."
-                            value={customRequests}
-                            onChange={handleCustomRequestChange}
-                            sx={{
-                                '& .MuiOutlinedInput-root': {
-                                    '& fieldset': {
-                                        borderColor: 'grey.300',
+                        <Box sx={{ pl: 0 }}>
+                            <TextField
+                                fullWidth
+                                multiline
+                                rows={3}
+                                variant="outlined"
+                                placeholder="Enter any additional special requests here..."
+                                value={customRequests}
+                                onChange={handleCustomRequestChange}
+                                sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        '& fieldset': {
+                                            borderColor: 'grey.300',
+                                        },
+                                        '&:hover fieldset': {
+                                            borderColor: 'primary.main',
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                            borderColor: 'primary.main',
+                                        },
                                     },
-                                    '&:hover fieldset': {
-                                        borderColor: 'primary.main',
-                                    },
-                                    '&.Mui-focused fieldset': {
-                                        borderColor: 'primary.main',
-                                    },
-                                },
-                            }}
-                        />
+                                }}
+                            />
+                        </Box>
                     </Box>
 
                     {customRequests && (
@@ -188,6 +195,7 @@ const PresetRequestCheckbox = ({ request, checked, onChange }) => {
             sx={{
                 width: '100%',
                 m: 0,
+                p: 0,
                 '& .MuiFormControlLabel-label': {
                     fontSize: '0.875rem'
                 }

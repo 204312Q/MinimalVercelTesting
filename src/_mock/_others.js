@@ -14,7 +14,7 @@ export const _carouselPackages = [
     name: '28 Days Dual Meal',
     image: '/menu/HakkaYellowWineChickenwithBlackFungus_360x.webp',
     alt: '28 Days Dual Meal',
-    description: 'Lunch and Dinner | $$/meal',
+    description: 'Lunch and Dinner | $31.57/meal',
     price: '$1,768.00'
   },
   {
@@ -22,7 +22,7 @@ export const _carouselPackages = [
     name: '14 Days Dual Meal',
     image: '/menu/Pigs_Trotter_with_Ginger_Vinegar_and_Egg.webp',
     alt: '14 Days Dual Meal',
-    description: 'Lunch and Dinner | $$/meal',
+    description: 'Lunch and Dinner | $34.57/meal',
     price: '$968.00'
   },
   {
@@ -30,7 +30,7 @@ export const _carouselPackages = [
     name: '7 Days Dual Meal',
     image: '/menu/product-2.webp',
     alt: '7 Days Dual Meal',
-    description: 'Lunch and Dinner | $$/meal',
+    description: 'Lunch and Dinner | $35.57/meal',
     price: '$498.00'
   }
 ];
