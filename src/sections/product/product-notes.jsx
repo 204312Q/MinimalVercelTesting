@@ -41,13 +41,13 @@ const BMB_MEAL_EXTRAS = [
     "BMB Gift Voucher (worth $100, Redeem from BMB)",
 ];
 
-const POSTNATAL_MASSAGE_BENEFITS = [
-    "Relieve neck and shoulder pain from carrying and breastfeeding baby",
-    "Help to restore the uterus to its original state",
-    "Help to eliminate excess body fluids and reduces fluid retention",
-    "Help in weight loss",
-    "Increase blood circulation"
-];
+// const POSTNATAL_MASSAGE_BENEFITS = [
+//     "Relieve neck and shoulder pain from carrying and breastfeeding baby",
+//     "Help to restore the uterus to its original state",
+//     "Help to eliminate excess body fluids and reduces fluid retention",
+//     "Help in weight loss",
+//     "Increase blood circulation"
+// ];
 
 const POSTNATAL_TRANSPORT = [
     "Customer may opt for home service for single sessions or first-trial sessions with a top-up of $50 for the transportation fee",
@@ -83,10 +83,6 @@ export function ProductNotes({ selectedCategory, selectedBundle }) {
                 title: "BMB Massage Package Includes:",
                 items: [...BMB_MEAL, ...BMB_MEAL_EXTRAS],
                 additionalSections: [
-                    {
-                        title: "Postnatal Massage Benefits:",
-                        items: POSTNATAL_MASSAGE_BENEFITS
-                    },
                     {
                         title: "Transport Information:",
                         items: POSTNATAL_TRANSPORT

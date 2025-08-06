@@ -264,29 +264,6 @@ export function ProductAddOnForm({ addOnItems = [], onAddOnChange }) {
                         );
                     })}
                 </Box>
-
-                {/* Selected Add-Ons Summary
-                {selectedAddOns.length > 0 && (
-                    <Box sx={{ mt: 3, p: 2, backgroundColor: 'grey.50', borderRadius: 1 }}>
-                        <Typography variant="subtitle1" gutterBottom>
-                            Selected Add-Ons ({selectedAddOns.length}):
-                        </Typography>
-                        {selectedAddOns.map((addOn) => (
-                            <Box key={addOn.product_id} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                                <Typography variant="body2">• {addOn.name}</Typography>
-                                <Typography variant="body2" sx={{ fontWeight: 500 }}>${addOn.price}</Typography>
-                            </Box>
-                        ))}
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2, pt: 1, borderTop: 1, borderColor: 'grey.300' }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                                Add-On Total:
-                            </Typography>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'primary.main' }}>
-                                ${totalAddOnPrice}
-                            </Typography>
-                        </Box>
-                    </Box>
-                )} */}
             </CardContent>
         </Card>
     );

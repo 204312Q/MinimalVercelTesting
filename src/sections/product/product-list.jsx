@@ -15,6 +15,7 @@ const ProductAddOnForm = lazy(() => import('./product-addon-form').then(m => ({ 
 const ProductSpecialRequestForm = lazy(() => import('./product-special-request-form').then(m => ({ default: m.ProductSpecialRequestForm })));
 const ProductOrderSummary = lazy(() => import('./product-order-summary').then(m => ({ default: m.ProductOrderSummary })));
 const ProductNotes = lazy(() => import('./product-notes').then(m => ({ default: m.ProductNotes })));
+const ProductDeliveryForm = lazy(() => import('./product-delivery-form').then(m => ({ default: m.ProductDeliveryForm })));
 
 // Move loading component outside to prevent recreation
 const LoadingComponent = () => (
@@ -28,6 +29,8 @@ export function ProductList({ packages = [], addons = [], onProceedToOrder, load
   const [selectedAddOns, setSelectedAddOns] = useState([]);
   const [orderData, setOrderData] = useState(null);
   const [specialRequests, setSpecialRequests] = useState('');
+  const [deliveryData, setDeliveryData] = useState({});
+  const [isDeliveryValid, setIsDeliveryValid] = useState(false);
   const orderFormRef = useRef(null);
 
   // Optimized handlers
@@ -52,11 +55,20 @@ export function ProductList({ packages = [], addons = [], onProceedToOrder, load
     setSpecialRequests(requests);
   }, []);
 
+  const handleDeliveryDataChange = useCallback((data) => {
+    setDeliveryData(data);
+  }, []);
+
+  const handleDeliveryValidationChange = useCallback((isValid) => {
+    setIsDeliveryValid(isValid);
+  }, []);
+
   const handleClearSelection = useCallback(() => {
     setSelectedCategory(null);
     setSelectedAddOns([]);
     setOrderData(null);
     setSpecialRequests('');
+    setDeliveryData({});
   }, []);
 
   // Handle proceed to order - directly pass the final order to context
@@ -183,7 +195,14 @@ export function ProductList({ packages = [], addons = [], onProceedToOrder, load
                 key={`request-${selectedCategory.id}`}
                 onRequestChange={handleSpecialRequestChange}
               />
+
+              <ProductDeliveryForm
+                orderTotal={orderData?.totalPrice || 0}
+                onDeliveryDataChange={handleDeliveryDataChange}
+                onValidationChange={handleDeliveryValidationChange}
+              />
             </Box>
+
 
             {/* Right Column */}
             <Box sx={{
@@ -195,6 +214,8 @@ export function ProductList({ packages = [], addons = [], onProceedToOrder, load
                 orderData={orderData}
                 selectedAddOns={selectedAddOns}
                 specialRequests={specialRequests}
+                deliveryData={deliveryData}
+                isDeliveryValid={isDeliveryValid}
                 onProceedToOrder={handleProceedToOrder}
               />
             </Box>
@@ -204,10 +225,12 @@ export function ProductList({ packages = [], addons = [], onProceedToOrder, load
             selectedCategory={selectedCategory}
             selectedBundle={orderData?.selectedBundles}
           />
+
+
         </Suspense>
       </Box>
     );
-  }, [selectedCategory, orderData, selectedAddOns, specialRequests, filteredProducts, handleClearSelection, handleOrderChange, handleAddOnChange, handleSpecialRequestChange]);
+  }, [selectedCategory, orderData, selectedAddOns, specialRequests, deliveryData, isDeliveryValid, filteredProducts, handleClearSelection, handleOrderChange, handleAddOnChange, handleSpecialRequestChange, handleDeliveryDataChange, handleDeliveryValidationChange]);
 
   if (loading) {
     return <Typography>Loading...</Typography>;

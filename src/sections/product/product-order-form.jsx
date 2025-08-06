@@ -22,6 +22,11 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import { getBundlesForProduct } from 'src/actions/product-ssr';
+import { 
+    getMinimumSelectableDate, 
+    shouldDisableDate, 
+    validateSelectedDate
+} from 'src/utils/date-validation';
 
 export function ProductOrderForm({ category, products, onOrderChange }) {
     const [selectedProduct, setSelectedProduct] = useState('');
@@ -31,9 +36,12 @@ export function ProductOrderForm({ category, products, onOrderChange }) {
     const [selectedDate, setSelectedDate] = useState(null);
     const [startWith, setStartWith] = useState('lunch');
     const [bundleLoading, setBundleLoading] = useState(false);
+    const [dateError, setDateError] = useState('');
 
     // Memoized values
     const isTrialMeal = useMemo(() => category?.name === "Trial Meal", [category?.name]);
+
+    const minSelectableDate = useMemo(() => getMinimumSelectableDate(), []);
 
     const selectedProductData = useMemo(() =>
         products.find(p => p.product_id.toString() === selectedProduct),
@@ -54,7 +62,10 @@ export function ProductOrderForm({ category, products, onOrderChange }) {
 
         const basePrice = selectedProductData.price;
         const totalPrice = basePrice + bundlePrice;
-        const isValidOrder = !!(selectedProductData && selectedDate);
+        
+        // Validate the selected date
+        const dateValidation = validateSelectedDate(selectedDate);
+        const isValidOrder = !!(selectedProductData && selectedDate && dateValidation.isValid);
 
         return {
             selectedProduct: selectedProductData,
@@ -63,9 +74,10 @@ export function ProductOrderForm({ category, products, onOrderChange }) {
             totalPrice,
             dateType,
             selectedDate,
-            startWith,
+            startWith: dateType === 'confirmed' ? startWith : null, // Only include startWith for confirmed dates
             category: category?.name,
-            isValidOrder
+            isValidOrder,
+            dateValidation
         };
     }, [selectedProductData, selectedBundleData, bundlePrice, dateType, selectedDate, startWith, category?.name]);
 
@@ -121,8 +133,13 @@ export function ProductOrderForm({ category, products, onOrderChange }) {
         if (newValue) {
             const dateString = newValue.format('YYYY-MM-DD');
             setSelectedDate(dateString);
+            
+            // Validate the selected date
+            const validation = validateSelectedDate(dateString);
+            setDateError(validation.isValid ? '' : validation.message);
         } else {
             setSelectedDate(null);
+            setDateError('');
         }
     }, []);
 
@@ -180,56 +197,75 @@ export function ProductOrderForm({ category, products, onOrderChange }) {
                             </Box>
                         ) : (
                             availableBundles.map((bundle) => (
-                                <FormControlLabel
-                                    key={bundle.product_id}
-                                    control={
-                                        <Checkbox
-                                            checked={selectedBundles.includes(bundle.product_id)}
-                                            onChange={(e) => handleBundleChange(bundle.product_id, e.target.checked)}
-                                            sx={{
-                                                color: '#F27C96',
-                                                '&.Mui-checked': { color: '#F27C96' },
-                                            }}
-                                        />
-                                    }
-                                    label={
-                                        <Box sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between',
-                                            width: '100%'
-                                        }}>
-                                            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                                                {bundle.name}
-                                            </Typography>
-                                            <Typography variant="body2" sx={{
+                                <Box key={bundle.product_id} sx={{ mb: 1 }}>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={selectedBundles.includes(bundle.product_id)}
+                                                onChange={(e) => handleBundleChange(bundle.product_id, e.target.checked)}
+                                                sx={{
+                                                    color: '#F27C96',
+                                                    '&.Mui-checked': { color: '#F27C96' },
+                                                }}
+                                            />
+                                        }
+                                        label={
+                                            <Box sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between',
+                                                width: '100%'
+                                            }}>
+                                                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                                                    {bundle.name}
+                                                </Typography>
+                                                <Typography variant="body2" sx={{
+                                                    color: '#F27C96',
+                                                    fontWeight: 'bold',
+                                                    ml: 2
+                                                }}>
+                                                    +${bundle.price}
+                                                </Typography>
+                                            </Box>
+                                        }
+                                        sx={{ display: 'flex', width: '100%', m: 0 }}
+                                    />
+
+                                    {/* BMB Massage Package Description */}
+                                    {bundle.product_id === 20 && (
+                                        <Box sx={{ mt: 1, ml: 4 }}>
+                                            <Typography variant="subtitle2" sx={{
                                                 color: '#F27C96',
                                                 fontWeight: 'bold',
-                                                ml: 2
+                                                mb: 1
                                             }}>
-                                                +${bundle.price}
+                                                Postnatal Massage Benefits:
                                             </Typography>
+                                            <Box component="ul" sx={{
+                                                m: 0,
+                                                pl: 2,
+                                                listStyleType: 'disc',
+                                                listStylePosition: 'outside',
+                                                '& li': {
+                                                    fontSize: '0.875rem',
+                                                    color: 'text.secondary',
+                                                    mb: 0.5,
+                                                    display: 'list-item',
+                                                    ml: 1
+                                                }
+                                            }}>
+                                                <li>Relieve neck and shoulder pain from carrying and breastfeeding baby</li>
+                                                <li>Help to restore the uterus to its original state</li>
+                                                <li>Help to eliminate excess body fluids and reduces fluid retention</li>
+                                                <li>Help in weight loss</li>
+                                                <li>Increase blood circulation</li>
+                                            </Box>
                                         </Box>
-                                    }
-                                    sx={{ display: 'flex', mb: 1, width: '100%', m: 0 }}
-                                />
+                                    )}
+                                </Box>
                             ))
                         )}
 
-                        <Box sx={{
-                            position: 'absolute',
-                            top: -8,
-                            right: 8,
-                            backgroundColor: '#F27C96',
-                            color: 'white',
-                            px: 1,
-                            py: 0.5,
-                            borderRadius: '4px',
-                            fontSize: '0.75rem',
-                            fontWeight: 'bold'
-                        }}>
-                            SPECIAL
-                        </Box>
                     </Box>
                 )}
 
@@ -247,16 +283,16 @@ export function ProductOrderForm({ category, products, onOrderChange }) {
                     <FormControl component="fieldset" sx={{ width: '100%' }}>
                         <FormLabel component="legend">Date Type</FormLabel>
                         <RadioGroup value={dateType} onChange={handleDateTypeChange}>
-                            <FormControlLabel 
-                                value="confirmed" 
-                                control={<Radio />} 
-                                label="Confirmed Start Date" 
+                            <FormControlLabel
+                                value="confirmed"
+                                control={<Radio />}
+                                label="Confirmed Start Date"
                             />
                             {!isTrialMeal && (
-                                <FormControlLabel 
-                                    value="edd" 
-                                    control={<Radio />} 
-                                    label="E.D.D" 
+                                <FormControlLabel
+                                    value="edd"
+                                    control={<Radio />}
+                                    label="E.D.D"
                                 />
                             )}
                         </RadioGroup>
@@ -267,21 +303,55 @@ export function ProductOrderForm({ category, products, onOrderChange }) {
                             label={`${dateType === 'confirmed' ? 'Confirmed Date' : 'E.D.D Date'} *`}
                             value={selectedDate ? dayjs(selectedDate) : null}
                             onChange={handleDateChange}
+                            shouldDisableDate={shouldDisableDate}
                             slotProps={{
-                                textField: { sx: { width: '50%', mt: 2 } },
+                                textField: {
+                                    sx: {
+                                        width: { xs: '100%', md: '50%' },
+                                        mt: 2
+                                    },
+                                    error: !!dateError,
+                                    helperText: dateError
+                                },
+                                day: {
+                                    sx: {
+                                        // Disable all transitions and animations
+                                        transition: 'none !important',
+                                        animation: 'none !important',
+                                        // Selected date: primary color background, no transitions
+                                        '&.Mui-selected': {
+                                            backgroundColor: '#F27C96 !important',
+                                            color: 'white !important',
+                                            transition: 'none !important',
+                                            animation: 'none !important',
+                                        },
+                                        // No hover effects on selected
+                                        '&.Mui-selected:hover': {
+                                            backgroundColor: '#F27C96 !important',
+                                            transition: 'none !important',
+                                        },
+                                        // No focus effects on selected
+                                        '&.Mui-selected:focus': {
+                                            backgroundColor: '#F27C96 !important',
+                                            transition: 'none !important',
+                                        }
+                                    }
+                                }
                             }}
-                            minDate={dayjs()}
                         />
                     </LocalizationProvider>
                 </Box>
-                {/* Start With Options */}
-                {/* <FormControl component="fieldset" sx={{ mt: 3 }}>
-                    <FormLabel component="legend">Start With:</FormLabel>
-                    <RadioGroup value={startWith} onChange={handleStartWithChange}>
-                        <FormControlLabel value="lunch" control={<Radio />} label="Lunch" />
-                        <FormControlLabel value="dinner" control={<Radio />} label="Dinner" />
-                    </RadioGroup>
-                </FormControl> */}
+
+                {/* Start With Options - Only show for confirmed dates */}
+                {dateType === 'confirmed' && (
+                    <FormControl component="fieldset" sx={{ mt: 3 }}>
+                        <FormLabel component="legend">Start With:</FormLabel>
+                        <RadioGroup value={startWith} onChange={handleStartWithChange}>
+                            <FormControlLabel value="lunch" control={<Radio />} label="Lunch" />
+                            <FormControlLabel value="dinner" control={<Radio />} label="Dinner" />
+                        </RadioGroup>
+                    </FormControl>
+                )}
             </CardContent>
         </Card>
     );

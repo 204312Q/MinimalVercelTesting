@@ -15,17 +15,17 @@ import { Iconify } from 'src/components/iconify';
 
 // Move outside component to prevent recreation
 const PRESET_REQUESTS = [
-    { id: 'sp-1', value: 'No Pork Innards', label: 'No Pork Innards' },
-    { id: 'sp-2', value: 'No Pig Trotter', label: 'No Pig Trotter' },
-    { id: 'sp-3', value: 'No Chicken/Fish', label: 'No Chicken/Fish' },
-    { id: 'sp-4', value: 'No Chicken & Egg for first 1 or 2 weeks', label: 'No Chicken & Egg for the first 1 or 2 weeks' },
-    { id: 'sp-5', value: 'No Papaya Fish Soup', label: 'No Papaya Fish Soup' },
-    { id: 'sp-6', value: 'No Salmon', label: 'No Salmon' },
+    { id: 'sp-1', value: 'No Pork Innards', label: 'Pork Innards' },
+    { id: 'sp-2', value: 'No Pig Trotter', label: 'Pig Trotter' },
+    { id: 'sp-3', value: 'No Chicken/Fish', label: 'Chicken/Fish' },
+    { id: 'sp-4', value: 'No Chicken & Egg for first 1 or 2 weeks', label: 'Chicken & Egg for the first 1 or 2 weeks' },
+    { id: 'sp-5', value: 'No Papaya Fish Soup', label: 'Papaya Fish Soup' },
+    { id: 'sp-6', value: 'No Salmon', label: 'Salmon' },
     { id: 'sp-7', value: 'All White Rice', label: 'All White Rice' },
     { id: 'sp-8', value: 'All Brown Rice', label: 'All Brown Rice' },
-    { id: 'sp-9', value: 'No Snow/Sweet Peas', label: 'No Snow/Sweet Peas' },
-    { id: 'sp-10', value: 'No Sugar in Red Dates Tea', label: 'No Sugar in Red Dates Tea' },
-    { id: 'sp-11', value: 'No Weekend Deliveries', label: 'No Weekend Deliveries' },
+    { id: 'sp-9', value: 'No Snow/Sweet Peas', label: 'Snow/Sweet Peas' },
+    { id: 'sp-10', value: 'No Sugar in Red Dates Tea', label: 'Sugar in Red Dates Tea' },
+    { id: 'sp-11', value: 'No Weekend Deliveries', label: 'Weekend Deliveries' },
 ];
 
 export function ProductSpecialRequestForm({ onRequestChange }) {
@@ -40,11 +40,7 @@ export function ProductSpecialRequestForm({ onRequestChange }) {
     );
 
     const totalRequests = useMemo(() => {
-        const presetLabels = presetRequests.map(value =>
-            PRESET_REQUESTS.find(req => req.value === value)?.label
-        ).filter(Boolean);
-
-        const allRequests = [...presetLabels];
+        const allRequests = [...presetRequests];
         if (customRequests.trim()) {
             allRequests.push(customRequests.trim());
         }
@@ -115,7 +111,7 @@ export function ProductSpecialRequestForm({ onRequestChange }) {
                         <Box sx={{ pl: 0 }}>
                             <Grid container spacing={1}>
                                 {PRESET_REQUESTS.map((request) => (
-                                    <Grid item xs={6} sm={4} key={request.id}>
+                                    <Grid item xs={12} sm={4} key={request.id}>
                                         <PresetRequestCheckbox
                                             request={request}
                                             checked={presetRequests.includes(request.value)}

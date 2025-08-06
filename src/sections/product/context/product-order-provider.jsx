@@ -30,6 +30,24 @@ export function ProductOrderProvider({ children }) {
     // Save order to local storage and redirect to home
     const onProceedToOrder = useCallback((finalOrder) => {
         try {
+            // Validate delivery date
+            if (!finalOrder.selectedDate) {
+                alert('Please select a delivery date before proceeding with your order.');
+                return;
+            }
+
+            // Validate delivery information
+            if (!finalOrder.deliveryInfo) {
+                alert('Please complete the delivery information before proceeding with your order.');
+                return;
+            }
+
+            const { fullName, phone, email, address, postalCode } = finalOrder.deliveryInfo;
+            if (!fullName?.trim() || !phone?.trim() || !email?.trim() || !address?.trim() || !postalCode?.trim()) {
+                alert('Please fill in all required delivery fields before proceeding with your order.');
+                return;
+            }
+
             // Extract promo code information
             const promoCodeInfo = finalOrder.pricing?.appliedPromo ||
                 finalOrder.appliedPromo ||
@@ -58,7 +76,21 @@ export function ProductOrderProvider({ children }) {
                     discountAmount: promoCodeInfo.discountAmount || finalOrder.pricing?.promoDiscount || 0,
                     description: promoCodeInfo.description || `Discount applied: $${promoCodeInfo.discountAmount || finalOrder.pricing?.promoDiscount || 0}`
                 } : null,
-                bundle: bundleInfo
+                bundle: bundleInfo,
+                // Include delivery information
+                deliveryInfo: finalOrder.deliveryInfo ? {
+                    fullName: finalOrder.deliveryInfo.fullName,
+                    phone: finalOrder.deliveryInfo.phone,
+                    email: finalOrder.deliveryInfo.email,
+                    address: finalOrder.deliveryInfo.address,
+                    floor: finalOrder.deliveryInfo.floor,
+                    unit: finalOrder.deliveryInfo.unit,
+                    postalCode: finalOrder.deliveryInfo.postalCode
+                } : null,
+                // Include payment information
+                paymentInfo: finalOrder.deliveryInfo ? {
+                    paymentMethod: finalOrder.deliveryInfo.paymentMethod || 'full'
+                } : null
             };
 
             // Save the complete order data to local storage
@@ -71,7 +103,7 @@ export function ProductOrderProvider({ children }) {
 
             // Only redirect on client side to avoid SSR issues
             if (typeof window !== 'undefined') {
-                router.push('/payment');
+                router.push('');
             }
 
         } catch (error) {

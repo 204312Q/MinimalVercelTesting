@@ -177,7 +177,7 @@ export const PRODUCT =
       name: "BMB Massage Package",
       description: "Basic massage package only for 28 day package",
       type: "bundle", 
-      price: 3268.00,
+      price: 1500.00,
       bundled_to: 1,
     },
     {
@@ -185,7 +185,7 @@ export const PRODUCT =
       name: "MyQueen Staycay Package",
       description: "2D1N stay at Oasia Hotel with 6 months personal accident coverage",
       type: "bundle", 
-      price: 399.00,
+      price: 361.00,
       bundled_to: 8,
     }
 ];

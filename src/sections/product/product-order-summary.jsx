@@ -18,6 +18,8 @@ export function ProductOrderSummary({
     orderData,
     selectedAddOns = [],
     specialRequests = '',
+    deliveryData = {},
+    isDeliveryValid = false,
     onProceedToOrder
 }) {
     const [promoCode, setPromoCode] = useState('');
@@ -29,14 +31,17 @@ export function ProductOrderSummary({
         const basePrice = orderData?.selectedProduct?.price || 0;
         const bundlePrice = orderData?.bundlePrice || 0;
         const addOnTotal = selectedAddOns.reduce((sum, item) => sum + item.price, 0);
-        const packagePrice = bundlePrice > 0 ? bundlePrice : basePrice;
-        const subtotal = packagePrice + addOnTotal;
+        const packagePrice = basePrice; // Always use base price for package
+        const subtotal = packagePrice + bundlePrice + addOnTotal; // Add bundle price separately
 
         const bundleDiscount = orderData?.bundleWithMassage ? 0 : 0;
         const promoDiscount = appliedPromo?.discountAmount || 0;
         const totalDiscount = bundleDiscount + promoDiscount;
-        const tax = 0;
-        const total = Math.max(0, subtotal - totalDiscount + tax);
+        const subtotalAfterDiscount = subtotal - totalDiscount;
+
+        // GST is 9% inclusive - calculate GST amount from the final total
+        const gstAmount = subtotalAfterDiscount * 9 / 109;
+        const total = Math.max(0, subtotalAfterDiscount);
 
         return {
             basePrice,
@@ -47,7 +52,7 @@ export function ProductOrderSummary({
             bundleDiscount,
             promoDiscount,
             totalDiscount,
-            tax,
+            gstAmount,
             total
         };
     }, [orderData, selectedAddOns, appliedPromo]);
@@ -62,11 +67,21 @@ export function ProductOrderSummary({
         dateType: orderData?.dateType,
         selectedDate: orderData?.selectedDate,
         startWith: orderData?.startWith,
+        deliveryInfo: deliveryData,
         pricing: {
             ...pricingData,
             appliedPromo: appliedPromo // Include the applied promo information
         }
-    }), [selectedCategory, orderData, selectedAddOns, specialRequests, pricingData, appliedPromo]);
+    }), [selectedCategory, orderData, selectedAddOns, specialRequests, deliveryData, pricingData, appliedPromo]);
+
+    // Validation for form completion
+    const isFormValid = useMemo(() => {
+        const hasPackage = !!orderData?.selectedProduct;
+        const hasDate = !!orderData?.selectedDate;
+
+        // Use the proper validation from the delivery form
+        return hasPackage && hasDate && isDeliveryValid;
+    }, [orderData?.selectedProduct, orderData?.selectedDate, isDeliveryValid]);
 
     // Optimized event handlers
     const handlePromoCodeChange = useCallback((e) => {
@@ -222,7 +237,7 @@ export function ProductOrderSummary({
                             </Typography>
                         )}
 
-                        {orderData.startWith && (
+                        {orderData.startWith && orderData.dateType === 'confirmed' && (
                             <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
                                 <strong>Start with:</strong> {orderData.startWith.charAt(0).toUpperCase() + orderData.startWith.slice(1)}
                             </Typography>
@@ -250,13 +265,21 @@ export function ProductOrderSummary({
                     {pricingData.packagePrice > 0 && (
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                             <Typography variant="body2">
-                                {pricingData.bundlePrice > 0 ? 'Package (with Bundle)' : 'Package'}
+                                Package
                             </Typography>
-                            <Typography variant="body2" sx={{
-                                color: pricingData.bundlePrice > 0 ? '#F27C96' : 'inherit',
-                                fontWeight: pricingData.bundlePrice > 0 ? 'bold' : 'normal'
-                            }}>
+                            <Typography variant="body2">
                                 ${pricingData.packagePrice}
+                            </Typography>
+                        </Box>
+                    )}
+
+                    {pricingData.bundlePrice > 0 && (
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                            <Typography variant="body2">
+                                Bundle
+                            </Typography>
+                            <Typography variant="body2">
+                                ${pricingData.bundlePrice}
                             </Typography>
                         </Box>
                     )}
@@ -302,6 +325,16 @@ export function ProductOrderSummary({
                         </Box>
                     )}
 
+                    {/* GST Breakdown */}
+                    {pricingData.gstAmount > 0 && (
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                            <Typography variant="body2" color="text.secondary">GST (9% inclusive)</Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                ${pricingData.gstAmount.toFixed(2)}
+                            </Typography>
+                        </Box>
+                    )}
+
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2, pt: 1, borderTop: 1, borderColor: 'grey.300' }}>
                         <Typography variant="h6" sx={{ fontWeight: 600 }}>
                             Total
@@ -310,11 +343,6 @@ export function ProductOrderSummary({
                             ${pricingData.total}
                         </Typography>
                     </Box>
-
-                    {/* VAT note */}
-                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', textAlign: 'flex-start', mt: 0.5, fontStyle: 'italic' }}>
-                        (GST inclusive)
-                    </Typography>
                 </Box>
 
                 {/* Proceed Button */}
@@ -323,15 +351,17 @@ export function ProductOrderSummary({
                     fullWidth
                     size="large"
                     sx={{ mt: 2 }}
-                    disabled={!orderData?.selectedProduct}
+                    disabled={!isFormValid}
                     onClick={handleProceedClick}
                 >
                     Proceed to Order
                 </Button>
 
-                {!orderData?.selectedProduct && (
+                {!isFormValid && (
                     <Typography variant="caption" color="text.secondary" sx={{ display: 'block', textAlign: 'center', mt: 1 }}>
-                        Please select a package to continue
+                        {!orderData?.selectedProduct && 'Please select a package'}
+                        {orderData?.selectedProduct && !orderData?.selectedDate && 'Please select a delivery date'}
+                        {orderData?.selectedProduct && orderData?.selectedDate && !isDeliveryValid && 'Please complete and fix delivery information'}
                     </Typography>
                 )}
             </CardContent>

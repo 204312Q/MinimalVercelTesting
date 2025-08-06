@@ -73,26 +73,22 @@ export async function getAllProducts() {
 // ---------------------------------------------------------------------
 
 export async function getBundlesForProduct(productId) {
-  console.log('getBundlesForProduct - Starting with productId:', productId, typeof productId);
   
   try {
     const products = await import('src/_mock/_cpproduct.js');
     const allProducts = products.PRODUCT;
     
-    console.log('Total products loaded:', allProducts.length);
     
     // Debug: Show all bundle type products
     const allBundles = allProducts.filter(product => product.type === 'bundle');
-    console.log('All bundle products found:', allBundles);
     
     const bundleProducts = allProducts.filter(product => {
-      console.log('Checking product:', product.product_id, product.type, product.bundled_to, 'comparing with:', parseInt(productId));
+
       return product.type === 'bundle' && 
              product.bundled_to && 
              product.bundled_to === parseInt(productId);
     });
     
-    console.log('Matching bundles:', bundleProducts);
     return bundleProducts;
   } catch (error) {
     console.error('getBundlesForProduct - Error:', error);
