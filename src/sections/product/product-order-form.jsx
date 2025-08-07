@@ -22,9 +22,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import { getBundlesForProduct } from 'src/actions/product-ssr';
-import { 
-    getMinimumSelectableDate, 
-    shouldDisableDate, 
+import {
+    getMinimumSelectableDate,
+    shouldDisableDate,
     validateSelectedDate
 } from 'src/utils/date-validation';
 
@@ -62,7 +62,7 @@ export function ProductOrderForm({ category, products, onOrderChange }) {
 
         const basePrice = selectedProductData.price;
         const totalPrice = basePrice + bundlePrice;
-        
+
         // Validate the selected date
         const dateValidation = validateSelectedDate(selectedDate);
         const isValidOrder = !!(selectedProductData && selectedDate && dateValidation.isValid);
@@ -133,7 +133,7 @@ export function ProductOrderForm({ category, products, onOrderChange }) {
         if (newValue) {
             const dateString = newValue.format('YYYY-MM-DD');
             setSelectedDate(dateString);
-            
+
             // Validate the selected date
             const validation = validateSelectedDate(dateString);
             setDateError(validation.isValid ? '' : validation.message);

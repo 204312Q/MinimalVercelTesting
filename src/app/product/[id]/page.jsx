@@ -12,8 +12,13 @@ export default async function Page({ params }) {
   const { id } = params;
   const { product } = await getProduct(id);
   const addon = await getAddons();
-  console.log('addon_index:', addon);
-  return <ProductShopDetailsView product={product} addon={addon} />;
+
+  // Ensure data is serializable by creating plain objects
+  const serializedProduct = product ? JSON.parse(JSON.stringify(product)) : null;
+  const serializedAddon = addon ? JSON.parse(JSON.stringify(addon)) : [];
+
+  console.log('addon_index:', serializedAddon);
+  return <ProductShopDetailsView product={serializedProduct} addon={serializedAddon} />;
 }
 
 // ----------------------------------------------------------------------

@@ -10,7 +10,11 @@ export default async function Page() {
   const [packages, addons] = await Promise.all([
     getProducts(),
     getAddons()
-
   ]);
-  return <ProductShopView packages={packages} addons={addons} />;
+
+  // Ensure data is serializable by creating plain objects
+  const serializedPackages = packages ? JSON.parse(JSON.stringify(packages)) : [];
+  const serializedAddons = addons ? JSON.parse(JSON.stringify(addons)) : [];
+
+  return <ProductShopView packages={serializedPackages} addons={serializedAddons} />;
 }

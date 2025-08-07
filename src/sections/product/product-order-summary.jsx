@@ -361,7 +361,7 @@ export function ProductOrderSummary({
                     <Typography variant="caption" color="text.secondary" sx={{ display: 'block', textAlign: 'center', mt: 1 }}>
                         {!orderData?.selectedProduct && 'Please select a package'}
                         {orderData?.selectedProduct && !orderData?.selectedDate && 'Please select a delivery date'}
-                        {orderData?.selectedProduct && orderData?.selectedDate && !isDeliveryValid && 'Please complete and fix delivery information'}
+                        {orderData?.selectedProduct && orderData?.selectedDate && !isDeliveryValid && 'Please complete the delivery information'}
                     </Typography>
                 )}
             </CardContent>
