@@ -9,3 +9,6 @@ export const metadata = { title: `Checkout - ${CONFIG.appName}` };
 export default function Page() {
   return <CheckoutView />;
 }
+
+// Force dynamic rendering to avoid serialization issues
+export const dynamic = 'force-dynamic';

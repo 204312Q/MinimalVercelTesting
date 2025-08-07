@@ -8,5 +8,7 @@ import { PaymentView } from 'src/sections/payment/view';
 
 export default function Page() {
   return <PaymentView />;
-
 }
+
+// Force dynamic rendering to avoid serialization issues
+export const dynamic = 'force-dynamic';

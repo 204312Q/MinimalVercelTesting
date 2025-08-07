@@ -13,12 +13,8 @@ export default async function Page({ params }) {
   const { product } = await getProduct(id);
   const addon = await getAddons();
 
-  // Ensure data is serializable by creating plain objects
-  const serializedProduct = product ? JSON.parse(JSON.stringify(product)) : null;
-  const serializedAddon = addon ? JSON.parse(JSON.stringify(addon)) : [];
-
-  console.log('addon_index:', serializedAddon);
-  return <ProductShopDetailsView product={serializedProduct} addon={serializedAddon} />;
+  console.log('addon_index:', addon);
+  return <ProductShopDetailsView product={product} addon={addon} />;
 }
 
 // ----------------------------------------------------------------------
@@ -28,7 +24,7 @@ export default async function Page({ params }) {
  * Remove [1] and [2] if not using [2]
  * Will remove in Next.js v15
  */
-const dynamic = CONFIG.isStaticExport ? 'auto' : 'force-dynamic';
+const dynamic = 'force-dynamic'; // Force dynamic rendering to avoid serialization issues
 export { dynamic };
 
 /**

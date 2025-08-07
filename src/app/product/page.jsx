@@ -12,9 +12,8 @@ export default async function Page() {
     getAddons()
   ]);
 
-  // Ensure data is serializable by creating plain objects
-  const serializedPackages = packages ? JSON.parse(JSON.stringify(packages)) : [];
-  const serializedAddons = addons ? JSON.parse(JSON.stringify(addons)) : [];
-
-  return <ProductShopView packages={serializedPackages} addons={serializedAddons} />;
+  return <ProductShopView packages={packages} addons={addons} />;
 }
+
+// Force dynamic rendering to avoid serialization issues
+export const dynamic = 'force-dynamic';
