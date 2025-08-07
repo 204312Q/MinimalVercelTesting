@@ -5,6 +5,8 @@ const nextConfig = {
   env: {
     BUILD_STATIC_EXPORT: isStaticExport,
   },
+  // Disable all static optimization to prevent serialization issues
+  output: 'standalone',
   modularizeImports: {
     '@mui/icons-material': {
       transform: '@mui/icons-material/{{member}}',

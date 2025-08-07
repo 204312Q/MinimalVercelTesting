@@ -24,7 +24,7 @@ const LoadingComponent = () => (
   </Box>
 );
 
-export function ProductList({ packages = [], addons = [], onProceedToOrder, loading, sx, ...other }) {
+export function ProductList({ packages = [], addons = [], loading, sx, ...other }) {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedAddOns, setSelectedAddOns] = useState([]);
   const [orderData, setOrderData] = useState(null);
@@ -71,15 +71,11 @@ export function ProductList({ packages = [], addons = [], onProceedToOrder, load
     setDeliveryData({});
   }, []);
 
-  // Handle proceed to order - directly pass the final order to context
-  const handleProceedToOrder = useCallback((finalOrder) => {
-    if (!onProceedToOrder) return;
-
-    console.log('Processing order:', finalOrder);
-
-    // Directly pass the final order to the context
-    onProceedToOrder(finalOrder);
-  }, [onProceedToOrder]);
+  // Handle proceed to order - now handled directly in ProductOrderSummary
+  // const handleProceedToOrder = useCallback((finalOrder) => {
+  //   console.log('Processing order:', finalOrder);
+  //   // Order processing now happens directly in ProductOrderSummary via Stripe
+  // }, []);
 
   // Auto-scroll when category is selected
   useEffect(() => {
@@ -216,7 +212,7 @@ export function ProductList({ packages = [], addons = [], onProceedToOrder, load
                 specialRequests={specialRequests}
                 deliveryData={deliveryData}
                 isDeliveryValid={isDeliveryValid}
-                onProceedToOrder={handleProceedToOrder}
+              // onProceedToOrder={handleProceedToOrder} // Removed - now handled directly in component
               />
             </Box>
           </Box>

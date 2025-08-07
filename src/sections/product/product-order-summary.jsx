@@ -10,6 +10,8 @@ import Divider from '@mui/material/Divider';
 import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
 
 import { validatePromoCode } from 'src/utils/product-promotion';
 
@@ -20,11 +22,13 @@ export function ProductOrderSummary({
     specialRequests = '',
     deliveryData = {},
     isDeliveryValid = false,
-    onProceedToOrder
+    // onProceedToOrder // Removed - now handled directly via Stripe
 }) {
     const [promoCode, setPromoCode] = useState('');
     const [appliedPromo, setAppliedPromo] = useState(null);
     const [promoError, setPromoError] = useState('');
+    const [isProcessingCheckout, setIsProcessingCheckout] = useState(false);
+    const [checkoutError, setCheckoutError] = useState('');
 
     // Memoize expensive calculations
     const pricingData = useMemo(() => {
@@ -112,12 +116,86 @@ export function ProductOrderSummary({
         setPromoError('');
     }, []);
 
-    const handleProceedClick = useCallback(() => {
-
-        if (onProceedToOrder) {
-            onProceedToOrder(finalOrder);
+    const handleProceedClick = useCallback(async () => {
+        if (!isFormValid) {
+            console.log('Form is not valid, cannot proceed');
+            return;
         }
-    }, [finalOrder, onProceedToOrder]);
+
+        setIsProcessingCheckout(true);
+        setCheckoutError('');
+
+        try {
+            // Prepare products for Stripe
+            const stripeProducts = [];
+
+            // Add main product
+            if (finalOrder.product) {
+                stripeProducts.push({
+                    name: `${finalOrder.product.duration} Days - ${finalOrder.category}`,
+                    price: finalOrder.product.price,
+                    quantity: 1,
+                });
+            }
+
+            // Add selected bundles
+            if (finalOrder.selectedBundles?.length > 0) {
+                finalOrder.selectedBundles.forEach(bundle => {
+                    stripeProducts.push({
+                        name: bundle.name,
+                        price: bundle.price,
+                        quantity: 1,
+                    });
+                });
+            }
+
+            // Add add-ons
+            if (finalOrder.addOns?.length > 0) {
+                finalOrder.addOns.forEach(addon => {
+                    stripeProducts.push({
+                        name: addon.name,
+                        price: addon.price,
+                        quantity: 1,
+                    });
+                });
+            }
+
+            // Call Stripe checkout API
+            const response = await fetch('/api/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    products: stripeProducts,
+                    orderDetails: finalOrder, // Send full order details to store in Stripe metadata
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to create checkout session');
+            }
+
+            const { url, error } = await response.json();
+
+            if (error) {
+                throw new Error(error);
+            }
+
+            if (url) {
+                // Small delay to show the loading state before redirect
+                setTimeout(() => {
+                    window.location.href = url;
+                }, 500);
+            } else {
+                throw new Error('No checkout URL received');
+            }
+        } catch (error) {
+            console.error('Error proceeding to checkout:', error);
+            setCheckoutError(error.message || 'Failed to proceed to checkout. Please try again.');
+            setIsProcessingCheckout(false);
+        }
+    }, [finalOrder, isFormValid]);
 
     // Memoize component sections to prevent unnecessary re-renders
     const packageSection = useMemo(() => {
@@ -345,16 +423,24 @@ export function ProductOrderSummary({
                     </Box>
                 </Box>
 
+                {/* Error Message */}
+                {checkoutError && (
+                    <Alert severity="error" sx={{ mt: 2 }}>
+                        {checkoutError}
+                    </Alert>
+                )}
+
                 {/* Proceed Button */}
                 <Button
                     variant="contained"
                     fullWidth
                     size="large"
                     sx={{ mt: 2 }}
-                    disabled={!isFormValid}
+                    disabled={!isFormValid || isProcessingCheckout}
                     onClick={handleProceedClick}
+                    startIcon={isProcessingCheckout ? <CircularProgress size={20} color="inherit" /> : null}
                 >
-                    Proceed to Order
+                    {isProcessingCheckout ? 'Proceeding for Payment...' : 'Proceed to Order'}
                 </Button>
 
                 {!isFormValid && (
