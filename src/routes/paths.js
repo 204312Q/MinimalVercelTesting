@@ -36,9 +36,9 @@ export const paths = {
   figmaUrl: 'https://www.figma.com/design/cAPz4pYPtQEXivqe11EcDE/%5BPreview%5D-Minimal-Web.v6.0.0',
   product: {
     root: `/product`,
-    checkout: `/product/checkout`,
-    details: (id) => `/product/${id}`,
-    demo: { details: `/product/${MOCK_ID}` },
+    checkout: `/payment`, // Redirect to payment page instead
+    // details: (id) => `/product/${id}`, // Removed - route deleted
+    // demo: { details: `/product/${MOCK_ID}` }, // Removed - route deleted
   },
   post: {
     root: `/post`,
