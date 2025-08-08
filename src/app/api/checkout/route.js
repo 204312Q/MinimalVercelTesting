@@ -78,7 +78,7 @@ export const POST = async (request) => {
       mode: 'payment',
       success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/?canceled=true`,
-      // Store order details in Stripe metadata (temporary solution)
+      // Store ALL order details in Stripe metadata (simple solution)
       metadata: {
         orderId: `order_${Date.now()}`, // Generate temporary order ID
         customerName: orderDetails?.deliveryInfo?.fullName || '',
@@ -95,6 +95,10 @@ export const POST = async (request) => {
         specialRequests: orderDetails?.specialRequests || '',
         selectedBundles: JSON.stringify(orderDetails?.selectedBundles || []),
         appliedPromo: orderDetails?.pricing?.appliedPromo ? JSON.stringify(orderDetails.pricing.appliedPromo) : '',
+        // Add products and add-ons to metadata
+        products: JSON.stringify(products || []),
+        addOns: JSON.stringify(orderDetails?.addOns || []),
+        pricingData: JSON.stringify(orderDetails?.pricing || {}),
       },
       // Store customer details for automatic form filling
       customer_email: orderDetails?.deliveryInfo?.email,

@@ -1,11 +1,5 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
-import { 
-  saveOrderToDatabase, 
-  sendOrderConfirmationEmail, 
-  notifyAdminOfNewOrder, 
-  updateInventory 
-} from "src/utils/database";
 
 const stripe = require('stripe')(process.env.NEXT_STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -49,66 +43,65 @@ export async function POST(request) {
 
 async function handleCheckoutSessionCompleted(session) {
   try {
-    console.log('Processing completed checkout session:', session.id);
+    console.log('🎉 PAYMENT SUCCESSFUL! Processing checkout session:', session.id);
     
-    // Extract order details from metadata
+    // Extract ALL order data from metadata
     const orderData = {
+      // Stripe Information
       stripeSessionId: session.id,
       stripePaymentStatus: session.payment_status,
+      totalAmountPaid: session.amount_total / 100, // Convert from cents
+      currency: session.currency,
+      
+      // Order Information
       orderId: session.metadata.orderId,
+      paymentStatus: 'completed',
+      
+      // Customer Information
       customerName: session.metadata.customerName,
       customerEmail: session.metadata.customerEmail || session.customer_email,
       customerPhone: session.metadata.customerPhone,
+      
+      // Delivery Information
       deliveryAddress: JSON.parse(session.metadata.deliveryAddress || '{}'),
       deliveryDate: session.metadata.deliveryDate,
       startWith: session.metadata.startWith,
       specialRequests: session.metadata.specialRequests,
+      
+      // Product Information
+      products: JSON.parse(session.metadata.products || '[]'),
+      addOns: JSON.parse(session.metadata.addOns || '[]'),
       selectedBundles: JSON.parse(session.metadata.selectedBundles || '[]'),
+      
+      // Pricing Information
+      pricingData: JSON.parse(session.metadata.pricingData || '{}'),
       appliedPromo: session.metadata.appliedPromo ? JSON.parse(session.metadata.appliedPromo) : null,
-      totalAmount: session.amount_total / 100, // Convert from cents
-      currency: session.currency,
-      paymentStatus: 'completed',
-      createdAt: new Date(),
-      updatedAt: new Date()
+      
+      // Timestamps
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
 
-    console.log('Extracted order data:', orderData);
-
-    // Save to database
-    try {
-      const savedOrder = await saveOrderToDatabase(orderData);
-      console.log('Order saved to database:', savedOrder.id);
-
-      // Send confirmation email to customer
-      await sendOrderConfirmationEmail(orderData);
-      console.log('Confirmation email sent to:', orderData.customerEmail);
-
-      // Notify admin of new order
-      await notifyAdminOfNewOrder(orderData);
-      console.log('Admin notified of new order');
-
-      // Update inventory if needed
-      await updateInventory(orderData);
-      console.log('Inventory updated');
-
-    } catch (dbError) {
-      console.error('Database operations failed:', dbError);
-      // Don't throw here - we still want to acknowledge the webhook
-      // but you might want to implement retry logic or alert admins
-    }
+    console.log('📦 COMPLETE ORDER DATA:');
+    console.log('=====================================');
+    console.log(JSON.stringify(orderData, null, 2));
+    console.log('=====================================');
+    
+    console.log('✅ Order data captured successfully!');
+    console.log('🎯 Backend developer: Use this data to save to your database/system');
 
   } catch (error) {
-    console.error('Error processing checkout session:', error);
+    console.error('❌ Error processing checkout session:', error);
     throw error;
   }
 }
 
 async function handlePaymentIntentSucceeded(paymentIntent) {
   try {
-    console.log('Payment succeeded:', paymentIntent.id);
-    // Additional payment processing if needed
+    console.log('💰 Payment succeeded:', paymentIntent.id);
+    // Backend developer can add additional payment processing here if needed
   } catch (error) {
-    console.error('Error processing payment intent:', error);
+    console.error('❌ Error processing payment intent:', error);
     throw error;
   }
 }

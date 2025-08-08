@@ -14,6 +14,3 @@ export default async function Page() {
 
   return <ProductShopView packages={packages} addons={addons} />;
 }
-
-// Force dynamic rendering to avoid serialization issues
-export const dynamic = 'force-dynamic';
