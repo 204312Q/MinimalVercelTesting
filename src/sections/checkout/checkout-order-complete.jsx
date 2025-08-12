@@ -1,11 +1,9 @@
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 
-import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
 import { OrderCompleteIllustration } from 'src/assets/illustrations';
@@ -61,14 +59,14 @@ export function CheckoutOrderComplete({ onResetCart, onDownloadPDF, ...other }) 
         >
           <Button
             component={RouterLink}
-            href={paths.product.root}
+            href="/"
             size="large"
             color="inherit"
             variant="outlined"
             onClick={onResetCart}
             startIcon={<Iconify icon="eva:arrow-ios-back-fill" />}
           >
-            Continue shopping
+            Go to Home
           </Button>
         </Box>
       </Box>
