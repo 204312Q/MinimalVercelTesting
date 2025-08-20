@@ -76,20 +76,23 @@ export function OrderTableToolbar({
   );
 
   /**
-   * Handle date filter changes
-   * Filters orders created on or after the selected date
-   */
+  * Handle date filter changes
+  * Filters orders created on the exact selected date
+  */
   const handleFilterStartDate = useCallback(
     (newValue) => {
       onResetPage();
 
       if (newValue) {
-        // Format date manually to avoid timezone issues
-        const localDateString = `${newValue.getFullYear()}-${String(newValue.getMonth() + 1).padStart(2, '0')}-${String(newValue.getDate()).padStart(2, '0')}`;
+        // Convert to local date string to avoid timezone issues
+        const year = newValue.getFullYear();
+        const month = String(newValue.getMonth() + 1).padStart(2, '0');
+        const day = String(newValue.getDate()).padStart(2, '0');
+        const localDateString = `${year}-${month}-${day}`;
 
         console.log('🔍 Frontend Date Debug:');
         console.log('- Selected date object:', newValue);
-        console.log('- Local date string (manual):', localDateString);
+        console.log('- Local date string:', localDateString);
 
         updateFilters({ startDate: localDateString });
       } else {
