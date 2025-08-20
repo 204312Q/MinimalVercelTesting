@@ -81,12 +81,12 @@ export function OrderTableToolbar({
    */
   const handleFilterStartDate = useCallback(
     (newValue) => {
-      onResetPage(); // Reset to first page when date changes
+      onResetPage();
 
-      // Debug: Log the date being set
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Date filter set to:', newValue);
-      }
+      console.log('🔍 Frontend Date Debug:');
+      console.log('- Selected date object:', newValue);
+      console.log('- Date toISOString:', newValue?.toISOString());
+      console.log('- Date toString:', newValue?.toString());
 
       updateFilters({ startDate: newValue });
     },

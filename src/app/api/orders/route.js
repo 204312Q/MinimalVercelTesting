@@ -94,7 +94,7 @@ const applyPaymentStatusFilter = (orders, paymentStatus) => {
 /**
  * Apply date filter to orders array
  * @param {Array} orders - Orders array to filter
- * @param {string} startDate - ISO date string to filter from
+ * @param {string} startDate - ISO date string to filter by (exact date match)
  * @returns {Array} Filtered orders array
  */
 const applyDateFilter = (orders, startDate) => {
@@ -106,9 +106,13 @@ const applyDateFilter = (orders, startDate) => {
       ? startDate.split('T')[0]
       : startDate.substring(0, 10);
 
-    console.log('Filtering by date string:', filterDateStr);
+    // Always log this for debugging production issues
+    console.log('🔍 Date Filter Debug:');
+    console.log('- Raw startDate:', startDate);
+    console.log('- Extracted filterDateStr:', filterDateStr);
+    console.log('- Total orders to filter:', orders.length);
 
-    return orders.filter(order => {
+    const filteredOrders = orders.filter(order => {
       // Extract date part from order date
       const orderDateStr = order.order_date.includes('T')
         ? order.order_date.split('T')[0]
@@ -116,14 +120,18 @@ const applyDateFilter = (orders, startDate) => {
 
       const matches = orderDateStr === filterDateStr;
 
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`Order ${order.order_id}: "${orderDateStr}" === "${filterDateStr}" = ${matches}`);
-      }
+      // Log each order comparison
+      console.log(`Order ${order.order_id}: "${orderDateStr}" === "${filterDateStr}" = ${matches}`);
 
       return matches;
     });
+
+    console.log(`✅ Date filter result: ${filteredOrders.length} orders matched`);
+    console.log('Matched orders:', filteredOrders.map(o => ({ id: o.order_id, date: o.order_date })));
+
+    return filteredOrders;
   } catch (error) {
-    console.error('Date filter error:', error);
+    console.error('❌ Date filter error:', error);
     return orders;
   }
 };
