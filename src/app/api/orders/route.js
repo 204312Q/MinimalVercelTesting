@@ -94,35 +94,36 @@ const applyPaymentStatusFilter = (orders, paymentStatus) => {
 /**
  * Apply date filter to orders array
  * @param {Array} orders - Orders array to filter
- * @param {string} startDate - ISO date string to filter by (exact date match)
+ * @param {string} startDate - ISO date string to filter from
  * @returns {Array} Filtered orders array
  */
 const applyDateFilter = (orders, startDate) => {
   if (!startDate) return orders;
 
   try {
-    // Parse the filter date and normalize to UTC midnight
-    const filterDate = new Date(startDate);
-    const filterDateStr = filterDate.toISOString().split('T')[0]; // Get YYYY-MM-DD format
+    // Extract just the date part (YYYY-MM-DD) for comparison
+    const filterDateStr = startDate.includes('T')
+      ? startDate.split('T')[0]
+      : startDate.substring(0, 10);
 
-    console.log('Filtering by date:', filterDateStr);
+    console.log('Filtering by date string:', filterDateStr);
 
     return orders.filter(order => {
-      // Parse order date and normalize to UTC midnight
-      const orderDate = new Date(order.order_date);
-      const orderDateStr = orderDate.toISOString().split('T')[0]; // Get YYYY-MM-DD format
+      // Extract date part from order date
+      const orderDateStr = order.order_date.includes('T')
+        ? order.order_date.split('T')[0]
+        : order.order_date.substring(0, 10);
 
       const matches = orderDateStr === filterDateStr;
 
-      // Debug logging
       if (process.env.NODE_ENV === 'development') {
-        console.log(`Order ${order.order_id}: ${orderDateStr} === ${filterDateStr} = ${matches}`);
+        console.log(`Order ${order.order_id}: "${orderDateStr}" === "${filterDateStr}" = ${matches}`);
       }
 
       return matches;
     });
   } catch (error) {
-    console.error('Invalid date format:', startDate, error);
+    console.error('Date filter error:', error);
     return orders;
   }
 };
