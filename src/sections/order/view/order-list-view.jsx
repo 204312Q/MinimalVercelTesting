@@ -139,10 +139,11 @@ export function OrderListView() {
    * These values are sent to API as query parameters
    */
   const filters = useSetState({
-    name: '',              // Search term (searches order ID, customer name, email)
-    orderStatus: 'unfulfilled', // Default to show unfulfilled orders
-    paymentStatus: '',     // Empty string = show all payment statuses
-    startDate: null,       // Date filter (orders after this date)
+    name: '',
+    orderStatus: 'unfulfilled',
+    paymentStatus: '',
+    startDate: null,
+    startDateString: null, // <-- Add this line
   });
   const { state: currentFilters } = filters;
 
@@ -306,8 +307,12 @@ export function OrderListView() {
    */
   useEffect(() => {
     table.onResetPage();
-  }, [currentFilters.orderStatus, currentFilters.paymentStatus, currentFilters.name, currentFilters.startDate]);
-
+  }, [
+    currentFilters.orderStatus,
+    currentFilters.paymentStatus,
+    currentFilters.name,
+    currentFilters.startDateString // <-- Use startDateString, not startDate
+  ]);
   // ----------------------------------------------------------------------
   // COMPUTED VALUES - Memoized for performance
   // ----------------------------------------------------------------------
@@ -330,9 +335,9 @@ export function OrderListView() {
     !!currentFilters.name ||
     currentFilters.orderStatus !== 'unfulfilled' ||
     !!currentFilters.paymentStatus ||
-    !!currentFilters.startDate
-    , [currentFilters]);
-
+    !!currentFilters.startDateString, // <-- Use startDateString
+    [currentFilters]
+  );
   /**
    * Determine if "no data" state should be shown (memoized)
    */
