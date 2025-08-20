@@ -101,33 +101,47 @@ const applyDateFilter = (orders, startDate) => {
   if (!startDate) return orders;
 
   try {
-    // Extract just the date part (YYYY-MM-DD) for comparison
-    const filterDateStr = startDate.includes('T')
-      ? startDate.split('T')[0]
-      : startDate.substring(0, 10);
+    // Normalize the filter date to YYYY-MM-DD format
+    let filterDateStr = startDate;
+    if (startDate.includes('T')) {
+      filterDateStr = startDate.split('T')[0];
+    } else if (startDate.length > 10) {
+      filterDateStr = startDate.substring(0, 10);
+    }
 
-    // Always log this for debugging production issues
+    // Always log this for debugging
     console.log('🔍 Date Filter Debug:');
     console.log('- Raw startDate:', startDate);
-    console.log('- Extracted filterDateStr:', filterDateStr);
+    console.log('- Normalized filterDateStr:', filterDateStr);
     console.log('- Total orders to filter:', orders.length);
 
     const filteredOrders = orders.filter(order => {
-      // Extract date part from order date
-      const orderDateStr = order.order_date.includes('T')
-        ? order.order_date.split('T')[0]
-        : order.order_date.substring(0, 10);
+      // Normalize order date to YYYY-MM-DD format
+      let orderDateStr = order.order_date;
+      if (order.order_date.includes('T')) {
+        orderDateStr = order.order_date.split('T')[0];
+      } else if (order.order_date.length > 10) {
+        orderDateStr = order.order_date.substring(0, 10);
+      }
 
       const matches = orderDateStr === filterDateStr;
 
-      // Log each order comparison
-      console.log(`Order ${order.order_id}: "${orderDateStr}" === "${filterDateStr}" = ${matches}`);
+      // Log only the first few for debugging
+      if (filteredOrders.length < 5) {
+        console.log(`Order ${order.order_id}: "${orderDateStr}" === "${filterDateStr}" = ${matches}`);
+      }
 
       return matches;
     });
 
     console.log(`✅ Date filter result: ${filteredOrders.length} orders matched`);
-    console.log('Matched orders:', filteredOrders.map(o => ({ id: o.order_id, date: o.order_date })));
+    if (filteredOrders.length > 0) {
+      console.log('Sample matched orders:', filteredOrders.slice(0, 3).map(o => ({
+        id: o.order_id,
+        date: o.order_date,
+        customer: o.customer_name
+      })));
+    }
 
     return filteredOrders;
   } catch (error) {

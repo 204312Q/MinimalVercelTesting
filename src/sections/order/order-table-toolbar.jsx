@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react';
+import dayjs from 'dayjs';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -75,20 +76,29 @@ export function OrderTableToolbar({
     [onResetPage, updateFilters]
   );
 
-  /**
-   * Handle date filter changes
-   * Filters orders created on or after the selected date
-   */
   const handleFilterStartDate = useCallback(
     (newValue) => {
       onResetPage(); // Reset to first page when date changes
 
-      // Debug: Log the date being set
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Date filter set to:', newValue);
-      }
+      if (newValue) {
+        // Convert dayjs object to YYYY-MM-DD string for API
+        const dateString = newValue.format('YYYY-MM-DD');
 
-      updateFilters({ startDate: newValue });
+        console.log('🔍 Frontend Date Debug:');
+        console.log('- Selected dayjs object:', newValue);
+        console.log('- Formatted date string:', dateString);
+
+        // Store the dayjs object for DatePicker, but send string to API
+        updateFilters({
+          startDate: newValue,  // Store dayjs object for DatePicker
+          startDateString: dateString  // Store string for API
+        });
+      } else {
+        updateFilters({
+          startDate: null,
+          startDateString: null
+        });
+      }
     },
     [onResetPage, updateFilters]
   );
@@ -139,7 +149,7 @@ export function OrderTableToolbar({
     !!currentFilters.name ||
     currentFilters.orderStatus !== 'unfulfilled' ||
     !!currentFilters.paymentStatus ||
-    !!currentFilters.startDate
+    !!currentFilters.startDateString  // Check the string version
     , [currentFilters]);
 
   // ----------------------------------------------------------------------
@@ -158,8 +168,8 @@ export function OrderTableToolbar({
     >
       {/* Date Filter - Filters orders created on or after selected date */}
       <DatePicker
-        label="Start date" // Changed to be clearer about exact matching
-        value={currentFilters.startDate}
+        label="Start date"
+        value={currentFilters.startDate} // This should be a dayjs object or null
         onChange={handleFilterStartDate}
         slotProps={{
           textField: {
