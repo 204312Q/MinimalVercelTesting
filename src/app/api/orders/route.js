@@ -101,17 +101,29 @@ const applyDateFilter = (orders, startDate) => {
   if (!startDate) return orders;
 
   try {
+    // Parse the filter date and normalize to UTC midnight
     const filterDate = new Date(startDate);
-    filterDate.setHours(0, 0, 0, 0);
+    const filterDateStr = filterDate.toISOString().split('T')[0]; // Get YYYY-MM-DD format
+
+    console.log('Filtering by date:', filterDateStr);
 
     return orders.filter(order => {
+      // Parse order date and normalize to UTC midnight
       const orderDate = new Date(order.order_date);
-      orderDate.setHours(0, 0, 0, 0);
-      return orderDate.getTime() === filterDate.getTime();
+      const orderDateStr = orderDate.toISOString().split('T')[0]; // Get YYYY-MM-DD format
+
+      const matches = orderDateStr === filterDateStr;
+
+      // Debug logging
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`Order ${order.order_id}: ${orderDateStr} === ${filterDateStr} = ${matches}`);
+      }
+
+      return matches;
     });
   } catch (error) {
-    console.error('Invalid date format:', startDate);
-    return orders; // Return unfiltered if date is invalid
+    console.error('Invalid date format:', startDate, error);
+    return orders;
   }
 };
 
