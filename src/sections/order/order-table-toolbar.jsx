@@ -76,27 +76,25 @@ export function OrderTableToolbar({
     [onResetPage, updateFilters]
   );
 
+  /**
+   * Handle date filter changes
+   * Stores ISO string for API filtering
+   */
   const handleFilterStartDate = useCallback(
     (newValue) => {
       onResetPage(); // Reset to first page when date changes
 
       if (newValue) {
-        // Convert dayjs object to YYYY-MM-DD string for API
-        const dateString = newValue.format('YYYY-MM-DD');
-
-        console.log('🔍 Frontend Date Debug:');
-        console.log('- Selected dayjs object:', newValue);
-        console.log('- Formatted date string:', dateString);
-
-        // Store the dayjs object for DatePicker, but send string to API
+        // Use YYYY-MM-DD string for API filtering (removes time zone issues)
+        const dateString = dayjs(newValue).format('YYYY-MM-DD');
         updateFilters({
-          startDate: newValue,  // Store dayjs object for DatePicker
-          startDateString: dateString  // Store string for API
+          startDate: newValue,
+          startDateString: dateString,
         });
       } else {
         updateFilters({
           startDate: null,
-          startDateString: null
+          startDateString: null,
         });
       }
     },
@@ -169,7 +167,7 @@ export function OrderTableToolbar({
       {/* Date Filter - Filters orders created on or after selected date */}
       <DatePicker
         label="Start date"
-        value={currentFilters.startDate} // This should be a dayjs object or null
+        value={currentFilters.startDate}
         onChange={handleFilterStartDate}
         slotProps={{
           textField: {
