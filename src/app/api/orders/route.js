@@ -317,7 +317,8 @@ export async function GET(request) {
     const paymentStatus = searchParams.get('paymentStatus');
     const orderType = searchParams.get('orderType');
     const search = searchParams.get('search');
-    const startDate = searchParams.get('startDate');
+    // Change this line to read the string version
+    const startDate = searchParams.get('startDateString') || searchParams.get('startDate');
 
     // Log request for debugging (development only)
     if (process.env.NODE_ENV === 'development') {

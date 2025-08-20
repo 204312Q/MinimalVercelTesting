@@ -237,11 +237,12 @@ export function OrderListView() {
         limit: table.rowsPerPage.toString(),
         status: currentFilters.orderStatus,
         paymentStatus: currentFilters.paymentStatus,
-        sortBy: table.orderBy,     // Field to sort by
-        sortOrder: table.order,    // Sort direction
-        // Optional parameters (only added if they have values)
+        sortBy: table.orderBy,
+        sortOrder: table.order,
         ...(currentFilters.name && { search: currentFilters.name }),
-        ...(currentFilters.startDate && { startDate: currentFilters.startDate.toISOString() }),
+        // OLD: ...(currentFilters.startDate && { startDate: currentFilters.startDate.toISOString() }),
+        // NEW: Use startDateString if present
+        ...(currentFilters.startDateString && { startDateString: currentFilters.startDateString }),
       });
 
       // Log request details in development
