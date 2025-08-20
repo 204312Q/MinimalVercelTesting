@@ -83,12 +83,18 @@ export function OrderTableToolbar({
     (newValue) => {
       onResetPage();
 
-      console.log('🔍 Frontend Date Debug:');
-      console.log('- Selected date object:', newValue);
-      console.log('- Date toISOString:', newValue?.toISOString());
-      console.log('- Date toString:', newValue?.toString());
+      if (newValue) {
+        // Format date manually to avoid timezone issues
+        const localDateString = `${newValue.getFullYear()}-${String(newValue.getMonth() + 1).padStart(2, '0')}-${String(newValue.getDate()).padStart(2, '0')}`;
 
-      updateFilters({ startDate: newValue });
+        console.log('🔍 Frontend Date Debug:');
+        console.log('- Selected date object:', newValue);
+        console.log('- Local date string (manual):', localDateString);
+
+        updateFilters({ startDate: localDateString });
+      } else {
+        updateFilters({ startDate: null });
+      }
     },
     [onResetPage, updateFilters]
   );
