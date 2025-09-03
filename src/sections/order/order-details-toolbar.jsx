@@ -12,7 +12,6 @@ import { RouterLink } from 'src/routes/components';
 
 import { fDateTime } from 'src/utils/format-time';
 
-import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { CustomPopover } from 'src/components/custom-popover';
 
@@ -70,17 +69,6 @@ export function OrderDetailsToolbar({
           <Stack spacing={0.5}>
             <Box sx={{ gap: 1, display: 'flex', alignItems: 'center' }}>
               <Typography variant="h4"> Order {orderNumber} </Typography>
-              <Label
-                variant="soft"
-                color={
-                  (status === 'completed' && 'success') ||
-                  (status === 'pending' && 'warning') ||
-                  (status === 'cancelled' && 'error') ||
-                  'default'
-                }
-              >
-                {status}
-              </Label>
             </Box>
 
             <Typography variant="body2" sx={{ color: 'text.disabled' }}>
@@ -114,10 +102,6 @@ export function OrderDetailsToolbar({
             startIcon={<Iconify icon="solar:printer-minimalistic-bold" />}
           >
             Print
-          </Button>
-
-          <Button color="inherit" variant="contained" startIcon={<Iconify icon="solar:pen-bold" />}>
-            Edit
           </Button>
         </Box>
       </Box>

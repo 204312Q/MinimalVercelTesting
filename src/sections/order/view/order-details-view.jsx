@@ -6,34 +6,45 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid2';
 import Divider from '@mui/material/Divider';
+import Button from '@mui/material/Button';
 
 import { paths } from 'src/routes/paths';
 
 import { ORDER_STATUS_OPTIONS } from 'src/_mock/_order';
 import { DashboardContent } from 'src/layouts/dashboard';
 
-import { OrderDetailsItems } from '../order-details-item';
-import { OrderDetailsToolbar } from '../order-details-toolbar';
-import { OrderDetailsHistory } from '../order-details-history';
-import { OrderDetailsPayment } from '../order-details-payment';
+// Correct imports for default exports
+import { OrderItemDetail } from '../order-details-item';
+import OrderSpecialRequest from '../order-special-request';
+import OrderAddonAssignment from '../order-addon-assignment';
 import { OrderDetailsCustomer } from '../order-details-customer';
+import { OrderDetailsStarting } from "../order-details-starting"
 import { OrderDetailsDelivery } from '../order-details-delivery';
-import { OrderDetailsShipping } from '../order-details-shipping';
+import OrderPaymentDetail from '../order-details-payment';
+
+import { OrderDetailsToolbar } from '../order-details-toolbar';
 
 // ----------------------------------------------------------------------
 
-export function OrderDetailsView({ order }) {
-  const [status, setStatus] = useState(order?.status);
+export default function OrderDetailsView({ order }) {
+  const [status, setStatus] = useState(order?.order_status);
 
   const handleChangeStatus = useCallback((newValue) => {
+    // TODO: Call backend API to update order status here
     setStatus(newValue);
   }, []);
+
+  const handleCancelOrder = useCallback(() => {
+    // TODO: Call backend API to cancel the order here
+    // Example: await api.cancelOrder(order.order_id);
+    alert('Order cancelled!'); // Replace with your logic/UI
+  }, [order]);
 
   return (
     <DashboardContent>
       <OrderDetailsToolbar
         status={status}
-        createdAt={order?.createdAt}
+        createdAt={order?.created_at}
         orderNumber={order?.orderNumber}
         backHref={paths.dashboard.order.root}
         onChangeStatus={handleChangeStatus}
@@ -45,32 +56,60 @@ export function OrderDetailsView({ order }) {
           <Box
             sx={{ gap: 3, display: 'flex', flexDirection: { xs: 'column-reverse', md: 'column' } }}
           >
-            <OrderDetailsItems
-              items={order?.items}
-              taxes={order?.taxes}
-              shipping={order?.shipping}
-              discount={order?.discount}
-              subtotal={order?.subtotal}
-              totalAmount={order?.totalAmount}
+            {/* Item details section */}
+            <OrderItemDetail
+              items={order.items}
+              subtotal={order.total_amount}
+              discount={order.total_discount_amount}
+              taxes={order.taxes}
+              totalAmount={order.final_amount} // taxes already included
             />
 
-            <OrderDetailsHistory history={order?.history} />
+            {/* Special request section */}
+            <OrderSpecialRequest
+              special_requests={order.special_requests}
+              special_request_notes={order.special_request_notes}
+            />
+
+            {/* Add-on assignment section */}
+            <OrderAddonAssignment addons={order?.addons} />
+
+            {/* Payment info section */}
+            <OrderPaymentDetail order={order} />
+
+
           </Box>
         </Grid>
 
         <Grid size={{ xs: 12, md: 4 }}>
           <Card>
+            {/* Customer info section */}
             <OrderDetailsCustomer customer={order?.customer} />
 
             <Divider sx={{ borderStyle: 'dashed' }} />
-            <OrderDetailsDelivery delivery={order?.delivery} />
+            {/* Starting info section */}
+            <OrderDetailsStarting
+              startType={order?.start_type}
+              startDate={order?.start_date}
+              eddDate={order?.edd_date}
+            />
 
             <Divider sx={{ borderStyle: 'dashed' }} />
-            <OrderDetailsShipping shippingAddress={order?.shippingAddress} />
+            {/* Delivery info section */}
+            <OrderDetailsDelivery delivery={order?.shippingAddress} />
 
-            <Divider sx={{ borderStyle: 'dashed' }} />
-            <OrderDetailsPayment payment={order?.payment} />
           </Card>
+          {/* Cancel Order Button */}
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+            <Button
+              variant="outlined"
+              color="error"
+              sx={{ fontWeight: 600 }}
+              onClick={handleCancelOrder}
+            >
+              Cancel Order
+            </Button>
+          </Box>
         </Grid>
       </Grid>
     </DashboardContent>

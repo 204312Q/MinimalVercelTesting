@@ -103,7 +103,7 @@ function OrderTableRowComponent({ row, selected, onSelectRow, detailsHref }) {
       <TableCell sx={{ width: 120 }}>
         <Link
           component={RouterLink}
-          href={detailsHref}
+          href={`${detailsHref}?orderNumber=${encodeURIComponent(row.orderNumber)}`}
           color="inherit"
           underline="always"
           sx={{ fontWeight: 500 }}

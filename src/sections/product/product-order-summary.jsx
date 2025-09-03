@@ -176,7 +176,7 @@ export function ProductOrderSummary({
             }
 
             // Call Stripe checkout API
-            const response = await fetch('/api/checkout', {
+            const response = await fetch('/api/stripe/checkout', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

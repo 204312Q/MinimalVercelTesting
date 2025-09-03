@@ -1,113 +1,75 @@
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
-import CardHeader from '@mui/material/CardHeader';
+import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import ListItemText from '@mui/material/ListItemText';
-
+import { Iconify } from 'src/components/iconify';
 import { fCurrency } from 'src/utils/format-number';
 
-import { Iconify } from 'src/components/iconify';
-import { Scrollbar } from 'src/components/scrollbar';
-
-// ----------------------------------------------------------------------
-
-export function OrderDetailsItems({
-  taxes,
-  shipping,
-  discount,
-  subtotal,
+export function OrderItemDetail({
   items = [],
-  totalAmount,
+  subtotal = 0,
+  discount = 0,
+  taxes = 0,
+  totalAmount = 0,
+  onEdit, // optional edit handler
 }) {
-  const renderTotal = () => (
-    <Box
-      sx={{
-        p: 3,
-        gap: 2,
-        display: 'flex',
-        textAlign: 'right',
-        typography: 'body2',
-        alignItems: 'flex-end',
-        flexDirection: 'column',
-      }}
-    >
-      <Box sx={{ display: 'flex' }}>
-        <Box sx={{ color: 'text.secondary' }}>Subtotal</Box>
-        <Box sx={{ width: 160, typography: 'subtitle2' }}>{fCurrency(subtotal) || '-'}</Box>
-      </Box>
-
-      <Box sx={{ display: 'flex' }}>
-        <Box sx={{ color: 'text.secondary' }}>Shipping</Box>
-        <Box sx={{ width: 160, ...(shipping && { color: 'error.main' }) }}>
-          {shipping ? `- ${fCurrency(shipping)}` : '-'}
-        </Box>
-      </Box>
-
-      <Box sx={{ display: 'flex' }}>
-        <Box sx={{ color: 'text.secondary' }}>Discount</Box>
-        <Box sx={{ width: 160, ...(discount && { color: 'error.main' }) }}>
-          {discount ? `- ${fCurrency(discount)}` : '-'}
-        </Box>
-      </Box>
-
-      <Box sx={{ display: 'flex' }}>
-        <Box sx={{ color: 'text.secondary' }}>Taxes</Box>
-
-        <Box sx={{ width: 160 }}>{taxes ? fCurrency(taxes) : '-'}</Box>
-      </Box>
-
-      <Box sx={{ display: 'flex', typography: 'subtitle1' }}>
-        <div>Total</div>
-        <Box sx={{ width: 160 }}>{fCurrency(totalAmount) || '-'}</Box>
-      </Box>
-    </Box>
-  );
-
   return (
     <Card>
-      <CardHeader
-        title="Details"
-        action={
-          <IconButton>
+      <Box sx={{ p: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+          <Typography variant="h6">Details</Typography>
+          <IconButton size="small" onClick={onEdit}>
             <Iconify icon="solar:pen-bold" />
           </IconButton>
-        }
-      />
-
-      <Scrollbar>
-        {items.map((item) => (
+        </Box>
+        {items.map((item, idx) => (
           <Box
-            key={item.id}
-            sx={[
-              (theme) => ({
-                p: 3,
-                minWidth: 640,
-                display: 'flex',
-                alignItems: 'center',
-                borderBottom: `dashed 2px ${theme.vars.palette.background.neutral}`,
-              }),
-            ]}
+            key={item.id || item.sku || idx}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              py: 2,
+              borderBottom: idx < items.length - 1 ? '1px dashed #eee' : 'none',
+            }}
           >
-            <Avatar src={item.coverUrl} variant="rounded" sx={{ width: 48, height: 48, mr: 2 }} />
-
-            <ListItemText
-              primary={item.name}
-              secondary={item.sku}
-              primaryTypographyProps={{ typography: 'body2' }}
-              secondaryTypographyProps={{ component: 'span', color: 'text.disabled', mt: 0.5 }}
+            <Avatar
+              src={item.coverUrl}
+              alt={item.name}
+              variant="rounded"
+              sx={{ width: 56, height: 56, mr: 2 }}
             />
-
-            <Box sx={{ typography: 'body2' }}>x{item.quantity}</Box>
-
-            <Box sx={{ width: 110, textAlign: 'right', typography: 'subtitle2' }}>
-              {fCurrency(item.price)}
+            <Box sx={{ flexGrow: 1 }}>
+              <Typography variant="subtitle1">{item.name}</Typography>
             </Box>
+            <Typography sx={{ minWidth: 40, textAlign: 'center' }}>x{item.quantity}</Typography>
+            <Typography sx={{ minWidth: 80, textAlign: 'right' }}>
+              {fCurrency(item.price)}
+            </Typography>
           </Box>
         ))}
-      </Scrollbar>
+        <Divider sx={{ my: 2 }} />
 
-      {renderTotal()}
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
+          <Box sx={{ display: 'flex', minWidth: 220, justifyContent: 'space-between' }}>
+            <Typography color="text.secondary">Subtotal</Typography>
+            <Typography>{fCurrency(subtotal)}</Typography>
+          </Box>
+          <Box sx={{ display: 'flex', minWidth: 220, justifyContent: 'space-between' }}>
+            <Typography color="text.secondary">Discount</Typography>
+            <Typography color="error">{discount ? `-${fCurrency(discount)}` : '-'}</Typography>
+          </Box>
+          <Box sx={{ display: 'flex', minWidth: 220, justifyContent: 'space-between' }}>
+            <Typography color="text.secondary">Taxes</Typography>
+            <Typography>{taxes ? fCurrency(taxes) : '-'}</Typography>
+          </Box>
+          <Box sx={{ display: 'flex', minWidth: 220, justifyContent: 'space-between', mt: 1 }}>
+            <Typography variant="h6">Total</Typography>
+            <Typography variant="h6">{fCurrency(totalAmount)}</Typography>
+          </Box>
+        </Box>
+      </Box>
     </Card>
   );
 }

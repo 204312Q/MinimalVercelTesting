@@ -1,10 +1,10 @@
 import { _mock } from './_mock';
+import { PRODUCT } from './_cpproduct';
 
-// Helper function to generate proper dates
 const generateDate = (daysAgo) => {
   const date = new Date();
   date.setDate(date.getDate() - daysAgo);
-  return date.toISOString();
+  return date.toISOString().slice(0, 10); // YYYY-MM-DD format
 };
 
 export const ORDER_STATUS_OPTIONS = [
@@ -21,11 +21,81 @@ export const PAYMENT_STATUS_OPTIONS = [
   { value: 'partial', label: 'Partial' },
 ];
 
-// Generate orders matching your ERD schema
+const PRESET_REQUESTS = [
+  'No Pork Innards',
+  'No Pig Trotter',
+  'No Chicken/Fish',
+  'No Chicken & Egg for first 1 or 2 weeks',
+  'No Papaya Fish Soup',
+  'No Salmon',
+  'All White Rice',
+  'All Brown Rice',
+  'No Snow/Sweet Peas',
+  'No Sugar in Red Dates Tea',
+  'No Weekend Deliveries',
+];
+
 export const _orders = Array.from({ length: 20 }, (_, index) => {
-  const basePrice = 50 + (index * 25) + Math.random() * 200;
+  // Select a random package
+  const packages = PRODUCT.filter(p => p.type === 'package');
+  const packageItem = packages[Math.floor(Math.random() * packages.length)];
+
+  // Optionally add a bundle
+  const bundles = PRODUCT.filter(p => p.type === 'bundle');
+  const bundleItem = Math.random() > 0.5 ? bundles[Math.floor(Math.random() * bundles.length)] : null;
+
+  // Optionally add add-ons
+  const addOns = PRODUCT.filter(p => p.type === 'addOn');
+  const addonCount = Math.floor(Math.random() * 3); // 0-2 add-ons
+  const addonItems = [];
+  for (let i = 0; i < addonCount; i++) {
+    addonItems.push(addOns[Math.floor(Math.random() * addOns.length)]);
+  }
+
+  // Build items array using actual products
+  const items = [
+    {
+      id: `order_${index}_package`,
+      name: packageItem.name,
+      sku: `PKG${packageItem.product_id}`,
+      quantity: 1,
+      price: packageItem.price,
+      coverUrl: packageItem.image,
+    },
+    ...(bundleItem
+      ? [{
+        id: `order_${index}_bundle`,
+        name: bundleItem.name,
+        sku: `BND${bundleItem.product_id}`,
+        quantity: 1,
+        price: bundleItem.price,
+        coverUrl: bundleItem.image,
+      }]
+      : []),
+    ...addonItems.map((addon, i) => ({
+      id: `order_${index}_addon_${i}`,
+      name: addon.name,
+      sku: `ADDON${addon.product_id}`,
+      quantity: 1,
+      price: addon.price,
+      coverUrl: addon.image,
+    })),
+  ];
+
+  // Calculate subtotal from items
+  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  // Discount logic
   const totalDiscount = index % 5 === 0 ? 50.00 : 0;
-  const finalAmount = basePrice - totalDiscount;
+
+  // Final amount (grand total, taxes already included)
+  const finalAmount = subtotal - totalDiscount;
+
+  // Taxes (GST 9% on subtotal minus discount) - for display only
+  const taxableAmount = subtotal - totalDiscount;
+  const taxes = taxableAmount > 0 ? Math.round(taxableAmount * 0.09 * 100) / 100 : 0;
+
+  // Amount paid logic
   const amountPaid = index % 4 === 0 ? finalAmount * 0.5 : finalAmount;
 
   // Customer information
@@ -52,53 +122,57 @@ export const _orders = Array.from({ length: 20 }, (_, index) => {
   const paymentMethods = ['credit_card', 'bank_transfer', 'cash', 'digital_wallet'];
   const paymentMethod = paymentMethods[index % paymentMethods.length];
 
-  // START TYPE OPTIONS
-  const startTypeOptions = ['Lunch', 'Dinner', 'E.D.D'];
-  const startType = startTypeOptions[index % startTypeOptions.length];
+  // Alternate start_type: even index is E.D.D, odd index alternates Lunch/Dinner
+  const startTypeOptions = ['Lunch', 'Dinner'];
+  const isEDD = index % 2 === 0;
+  const startType = isEDD ? 'E.D.D' : startTypeOptions[(Math.floor(index / 2)) % startTypeOptions.length];
+  const edd_date = isEDD ? generateDate(index + 5) : null;
+
+  // Special requests (preset + custom)
+  const special_requests = PRESET_REQUESTS.filter((_, i) => (index + i) % 4 === 0);
+  const special_request_notes =
+    index % 4 === 0
+      ? 'Please deliver before noon. No ginger in any dish.'
+      : index % 4 === 1
+        ? 'Leave at doorstep if not home.'
+        : index % 4 === 2
+          ? 'Contact me before delivery.'
+          : '';
+
+  // Add-ons array for UI
+  const addons = addonItems.map(addon => addon.name);
 
   return {
-    // Primary fields matching ERD
     order_id: `ORD${(1000 + index).toString()}`,
     customer_name: customer.name,
     email: customer.email,
     phone: customer.phone,
-    total_amount: Math.round(basePrice * 100) / 100,
-    total_discount_amount: Math.round(totalDiscount * 100) / 100,
-    final_amount: Math.round(finalAmount * 100) / 100,
-    order_status: orderStatus, // 'unfulfilled', 'fulfilled', 'cancelled'
+    total_amount: subtotal,
+    total_discount_amount: totalDiscount,
+    taxes,
+    final_amount: finalAmount,
+    order_status: orderStatus,
     payment_method: paymentMethod,
-    payment_status: paymentStatus, // 'paid', 'Pending', 'Partial', 'Full Refund', 'Partial Refund'
+    payment_status: paymentStatus,
     amount_paid: Math.round(amountPaid * 100) / 100,
     order_date: orderDate,
-    start_type: startType, // CHANGED FROM delivery_time TO start_type
+    start_type: startType,
+    start_date: isEDD ? null : orderDate,
+    edd_date,
     additional_remarks: index % 3 === 0 ? 'Special handling required' : null,
     shipping_address_id: index + 1,
-
-    // Calculated fields
     balance_due: Math.round((finalAmount - amountPaid) * 100) / 100,
-    items_count: Math.floor(Math.random() * 5) + 1,
-
-    // UI compatibility fields
+    items_count: items.length,
     customer: customer,
     orderNumber: `#${(60100 + index).toString()}`,
     created_at: orderDate,
-
-    // Mock order items
-    items: [
-      {
-        id: `item_${index}_1`,
-        name: _mock.productName(index),
-        sku: `SKU${index.toString().padStart(3, '0')}`,
-        quantity: Math.floor(Math.random() * 3) + 1,
-        price: Math.round((basePrice / 2) * 100) / 100,
-        coverUrl: _mock.image.product(index),
-      }
-    ],
-
-    // Shipping address
+    items,
     shippingAddress: {
       fullAddress: '19034 Verna Unions Apt. 164 - Honolulu, RI / 87535',
       phoneNumber: customer.phone,
     },
+    special_requests,
+    special_request_notes,
+    addons,
   };
 });
