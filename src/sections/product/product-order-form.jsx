@@ -57,6 +57,14 @@ export function ProductOrderForm({ category, products, onOrderChange }) {
         return { selectedBundleData: bundles, bundlePrice: price };
     }, [availableBundles, selectedBundles]);
 
+    // Check if staycay/queen bundle is selected
+    const hasSpecialBundle = useMemo(() => {
+        return selectedBundleData.some(bundle =>
+            bundle.name.toLowerCase().includes('staycay') ||
+            bundle.name.toLowerCase().includes('queen')
+        );
+    }, [selectedBundleData]);
+
     const orderData = useMemo(() => {
         if (!selectedProductData) return null;
 
@@ -110,6 +118,15 @@ export function ProductOrderForm({ category, products, onOrderChange }) {
             onOrderChange(orderData);
         }
     }, [orderData, onOrderChange]);
+
+    // Update startWith when special bundles are selected
+    useEffect(() => {
+        if (hasSpecialBundle) {
+            setStartWith('dinner'); // Auto-set to dinner for special bundles
+        } else if (startWith !== 'lunch' && startWith !== 'dinner') {
+            setStartWith('lunch'); // Default to lunch for regular bundles
+        }
+    }, [hasSpecialBundle, startWith]);
 
     // Optimized event handlers
     const handleProductChange = useCallback((e) => {
@@ -347,7 +364,9 @@ export function ProductOrderForm({ category, products, onOrderChange }) {
                     <FormControl component="fieldset" sx={{ mt: 3 }}>
                         <FormLabel component="legend">Start With:</FormLabel>
                         <RadioGroup value={startWith} onChange={handleStartWithChange}>
-                            <FormControlLabel value="lunch" control={<Radio />} label="Lunch" />
+                            {!hasSpecialBundle && (
+                                <FormControlLabel value="lunch" control={<Radio />} label="Lunch" />
+                            )}
                             <FormControlLabel value="dinner" control={<Radio />} label="Dinner" />
                         </RadioGroup>
                     </FormControl>
