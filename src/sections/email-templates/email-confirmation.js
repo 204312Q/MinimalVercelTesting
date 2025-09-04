@@ -11,8 +11,10 @@ export function fullPaymentConfirmationTemplate({
   total,
 }) {
   return `
-    <div style="font-family: Arial, sans-serif; color: #222; max-width: 700px; margin: auto;">
-    <img src="https://minimal-vercel-testing.vercel.app/logo/logo-single(2).png" alt="Chilli Padi Confinement Logo" style="height: 48px; margin-bottom: 16px;" />
+        <div style="font-family: Arial, sans-serif; color: #222; max-width: 700px; margin: auto;">
+    <img src="https://minimal-vercel-testing.vercel.app/logo/logo-single(2).png" 
+         alt="Chilli Padi Confinement Logo" 
+         style="height: 80px; width: auto; margin-bottom: 16px;" />
       <div style="margin-bottom: 8px;">
         <div>Blk 3015 Bedok North Street 5 #04-19<br/>Shimei East Kitchen<br/>Singapore 486350</div>
         <div style="float: right; text-align: right;">
@@ -106,8 +108,10 @@ export function partialPaymentTemplate({
   outstanding,
 }) {
   return `
-      <div style="font-family: Arial, sans-serif; color: #222; max-width: 700px; margin: auto;">
-      <img src="https://minimal-vercel-testing.vercel.app/logo/logo-single(2).png" alt="Chilli Padi Confinement Logo" style="height: 48px; margin-bottom: 16px;" />
+    <div style="font-family: Arial, sans-serif; color: #222; max-width: 700px; margin: auto;">
+    <img src="https://minimal-vercel-testing.vercel.app/logo/logo-single(2).png" 
+         alt="Chilli Padi Confinement Logo" 
+         style="height: 80px; width: auto; margin-bottom: 16px;" />
       <div style="margin-bottom: 8px;">
         <div>Blk 3015 Bedok North Street 5 #04-19<br/>Shimei East Kitchen<br/>Singapore 486350</div>
         <div style="float: right; text-align: right;">
