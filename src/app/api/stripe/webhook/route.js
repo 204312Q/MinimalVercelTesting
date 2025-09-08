@@ -1,8 +1,7 @@
 import Stripe from 'stripe';
 import { NextResponse } from "next/server";
 import { headers } from 'next/headers';
-import { renderToString } from 'react-dom/server';
-import { FullPaymentConfirmationTemplate, PartialPaymentConfirmationTemplate } from 'src/components/email-templates/email-confirmation.jsx';
+import { fullPaymentConfirmationTemplate, partialPaymentTemplate } from '../../../../components/email-templates/email-confirmation.js';
 
 const stripe = new Stripe(process.env.NEXT_STRIPE_SECRET_KEY, {
   apiVersion: '2023-08-16',
@@ -25,7 +24,6 @@ export async function POST(request) {
       const session = event.data.object;
       console.log('Webhook processed successfully');
 
-      // sample data, to be replaced with api fetching to order summary
       const templateData = {
         date: '27/08/2025',
         confirmationNo: 'CPC-13699',
@@ -55,12 +53,11 @@ export async function POST(request) {
         outstanding: '18.00',
       };
 
-      // Render JSX components to HTML string
+      // Use string template functions (no JSX/renderToString needed)
       const html = templateData.payment_plan === 'partial'
-        ? renderToString(<PartialPaymentConfirmationTemplate {...templateData} />)
-        : renderToString(<FullPaymentConfirmationTemplate {...templateData} />);
+        ? partialPaymentTemplate(templateData)
+        : fullPaymentConfirmationTemplate(templateData);
 
-      // Send email via your API
       await fetch('https://minimal-vercel-testing.vercel.app/api/email' || 'https://localhost:3032/api/email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
