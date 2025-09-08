@@ -1,12 +1,12 @@
 import { Resend } from 'resend';
 
 export async function POST(request) {
-    const resend = new Resend('re_FvbHwJeA_MrEQLuzkfsv7wWgvWpJJWdtt');
+    const resend = new Resend(process.env.RESEND_API_KEY);
     const body = await request.json();
 
     try {
         const data = await resend.emails.send({
-            from: 'onboarding@resend.dev',
+            from: 'noreply@chillipadi.com.sg',
             to: body.to,
             subject: body.subject,
             html: body.html,
