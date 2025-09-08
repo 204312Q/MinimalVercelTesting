@@ -1,3 +1,5 @@
+const logoBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."; // Your actual base64 string
+
 // Full Payment Confirmation Template
 export function fullPaymentConfirmationTemplate({
   date,
@@ -13,10 +15,10 @@ export function fullPaymentConfirmationTemplate({
 }) {
   return `
     <div style="font-family: Arial, sans-serif; color: #222; max-width: 700px; margin: auto; margin-bottom: 24px; margin-top: 24px;">
-      <img src="https://minimal-vercel-testing.vercel.app/logo/logo-single(2).png" 
+      <img src="${logoBase64}" 
            alt="Chilli Padi Confinement Logo" 
            style="height: 80px; width: auto; margin-bottom: 16px;" />
-      
+
       <div style="margin-bottom: 8px;">
         <div>
           Blk 3015 Bedok North Street 5 #04-19<br/>
@@ -118,7 +120,7 @@ export function partialPaymentTemplate({
 }) {
   return `
     <div style="font-family: Arial, sans-serif; color: #222; max-width: 700px; margin: auto;">
-      <img src="https://minimal-vercel-testing.vercel.app/logo/logo-single(2).png" 
+            <img src="${logoBase64}" 
            alt="Chilli Padi Confinement Logo" 
            style="height: 80px; width: auto; margin-bottom: 16px;" />
       
