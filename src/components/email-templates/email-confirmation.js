@@ -12,7 +12,7 @@ export function fullPaymentConfirmationTemplate({
   total,
 }) {
   return `
-    <div style="font-family: Arial, sans-serif; color: #222; max-width: 700px; margin: auto;">
+    <div style="font-family: Arial, sans-serif; color: #222; max-width: 700px; margin: auto; margin-bottom: 24px; margin-top: 24px;">
       <img src="https://minimal-vercel-testing.vercel.app/logo/logo-single(2).png" 
            alt="Chilli Padi Confinement Logo" 
            style="height: 80px; width: auto; margin-bottom: 16px;" />
