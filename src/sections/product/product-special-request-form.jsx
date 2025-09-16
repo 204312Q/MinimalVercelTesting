@@ -9,56 +9,77 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
 import Grid from '@mui/material/Grid';
 
 import { Iconify } from 'src/components/iconify';
+// IMPORT GLOBAL SECURITY UTILITIES
+import { SECURITY_CONFIG } from 'src/utils/security';
+import { useSecureInput } from 'src/hooks/useSecureInput';
 
-// Move outside component to prevent recreation
-const PRESET_REQUESTS = [
-    { id: 'sp-1', value: 'No Pork Innards', label: 'Pork Innards' },
-    { id: 'sp-2', value: 'No Pig Trotter', label: 'Pig Trotter' },
-    { id: 'sp-3', value: 'No Chicken/Fish', label: 'Chicken/Fish' },
-    { id: 'sp-4', value: 'No Chicken & Egg for first 1 or 2 weeks', label: 'Chicken & Egg for the first 1 or 2 weeks' },
-    { id: 'sp-5', value: 'No Papaya Fish Soup', label: 'Papaya Fish Soup' },
-    { id: 'sp-6', value: 'No Salmon', label: 'Salmon' },
-    { id: 'sp-7', value: 'All White Rice', label: 'All White Rice' },
-    { id: 'sp-8', value: 'All Brown Rice', label: 'All Brown Rice' },
-    { id: 'sp-9', value: 'No Snow/Sweet Peas', label: 'Snow/Sweet Peas' },
-    { id: 'sp-10', value: 'No Sugar in Red Dates Tea', label: 'Sugar in Red Dates Tea' },
-    { id: 'sp-11', value: 'No Weekend Deliveries', label: 'Weekend Deliveries' },
+// ALL SPECIAL REQUESTS WITH TYPES
+const SPECIAL_REQUESTS = [
+    { id: 'sp-1', value: 'No Pork Innards', label: 'Pork Innards', type: 'exclude' },
+    { id: 'sp-2', value: 'No Pig Trotter', label: 'Pig Trotter', type: 'exclude' },
+    { id: 'sp-3', value: 'No Chicken', label: 'Chicken', type: 'exclude' },
+    { id: 'sp-4', value: 'No Fish', label: 'Fish', type: 'exclude' },
+    { id: 'sp-5', value: 'No Chicken & Egg for first 1 or 2 weeks', label: 'Chicken & Egg for the first 1 or 2 weeks', type: 'exclude' },
+    { id: 'sp-6', value: 'No Papaya Fish Soup', label: 'Papaya Fish Soup', type: 'exclude' },
+    { id: 'sp-7', value: 'No Salmon', label: 'Salmon', type: 'exclude' },
+    { id: 'sp-8', value: 'No Snow/Sweet Peas', label: 'Snow/Sweet Peas', type: 'exclude' },
+    { id: 'sp-9', value: 'No Sugar in Red Dates Tea', label: 'Sugar in Red Dates Tea', type: 'exclude' },
+    { id: 'sp-10', value: 'All White Rice', label: 'All White Rice', type: 'riceOption' },
+    { id: 'sp-11', value: 'All Brown Rice', label: 'All Brown Rice', type: 'riceOption' },
 ];
 
 export function ProductSpecialRequestForm({ onRequestChange }) {
-    const [customRequests, setCustomRequests] = useState('');
+    // USE THE SECURE INPUT HOOK
+    const customRequestsInput = useSecureInput('', SECURITY_CONFIG.MAX_TEXTAREA_LENGTH);
     const [presetRequests, setPresetRequests] = useState([]);
+    const [selectedRiceOption, setSelectedRiceOption] = useState(''); // New state for rice option
     const [expanded, setExpanded] = useState(false);
+
+    // Filter requests by type
+    const excludeRequests = useMemo(() =>
+        SPECIAL_REQUESTS.filter(request => request.type === 'exclude'),
+        []
+    );
+
+    const riceOptions = useMemo(() =>
+        SPECIAL_REQUESTS.filter(request => request.type === 'riceOption'),
+        []
+    );
 
     // Memoize expensive calculations
     const hasRequests = useMemo(() =>
-        presetRequests.length > 0 || customRequests.trim().length > 0,
-        [presetRequests.length, customRequests]
+        presetRequests.length > 0 || selectedRiceOption || customRequestsInput.value.trim().length > 0,
+        [presetRequests.length, selectedRiceOption, customRequestsInput.value]
     );
 
     const totalRequests = useMemo(() => {
         const allRequests = [...presetRequests];
-        if (customRequests.trim()) {
-            allRequests.push(customRequests.trim());
+        if (selectedRiceOption) {
+            allRequests.push(selectedRiceOption);
+        }
+        if (customRequestsInput.value.trim()) {
+            allRequests.push(customRequestsInput.value.trim());
         }
 
         return allRequests.join('; ');
-    }, [presetRequests, customRequests]);
+    }, [presetRequests, selectedRiceOption, customRequestsInput.value]);
 
     // Optimized event handlers
-    const handleCustomRequestChange = useCallback((e) => {
-        setCustomRequests(e.target.value);
-    }, []);
-
     const handlePresetRequestChange = useCallback((requestValue) => {
         setPresetRequests(prev =>
             prev.includes(requestValue)
                 ? prev.filter(val => val !== requestValue)
                 : [...prev, requestValue]
         );
+    }, []);
+
+    const handleRiceOptionChange = useCallback((event) => {
+        setSelectedRiceOption(event.target.value);
     }, []);
 
     const handleAccordionChange = useCallback((event, isExpanded) => {
@@ -98,19 +119,19 @@ export function ProductSpecialRequestForm({ onRequestChange }) {
                     }}
                 >
                     <Typography variant="h6" sx={{ ml: 1 }}>
-                        Special Requests {hasRequests && `(${presetRequests.length + (customRequests.trim() ? 1 : 0)})`}
+                        Special Requests {hasRequests && `(${presetRequests.length + (selectedRiceOption ? 1 : 0) + (customRequestsInput.value.trim() ? 1 : 0)})`}
                     </Typography>
                 </AccordionSummary>
 
                 <AccordionDetails sx={{ pt: 0, pb: 3, px: 3 }}>
-                    {/* Preset Checkboxes */}
+                    {/* EXCLUDE OPTIONS - Filtered by type */}
                     <Box sx={{ mb: 3 }}>
                         <Typography variant="subtitle2" gutterBottom sx={{ mb: 2, color: 'primary.darker', pl: 0 }}>
                             Exclude the Following:
                         </Typography>
                         <Box sx={{ pl: 0 }}>
                             <Grid container spacing={1}>
-                                {PRESET_REQUESTS.map((request) => (
+                                {excludeRequests.map((request) => (
                                     <Grid item xs={12} sm={4} key={request.id}>
                                         <PresetRequestCheckbox
                                             request={request}
@@ -123,7 +144,55 @@ export function ProductSpecialRequestForm({ onRequestChange }) {
                         </Box>
                     </Box>
 
-                    {/* Custom Notes */}
+                    {/* RICE OPTIONS - Filtered by type */}
+                    <Box sx={{ mb: 3 }}>
+                        <Typography variant="subtitle2" gutterBottom sx={{ mb: 2, color: 'primary.darker', pl: 0 }}>
+                            Rice Option:
+                        </Typography>
+                        <Box sx={{ pl: 0 }}>
+                            <RadioGroup
+                                value={selectedRiceOption}
+                                onChange={handleRiceOptionChange}
+                                sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}
+                            >
+                                {riceOptions.map((option) => (
+                                    <FormControlLabel
+                                        key={option.id}
+                                        value={option.value}
+                                        control={<Radio size="small" />}
+                                        label={
+                                            <Typography variant="body2">
+                                                {option.label}
+                                            </Typography>
+                                        }
+                                        sx={{
+                                            m: 0,
+                                            '& .MuiFormControlLabel-label': {
+                                                fontSize: '0.875rem'
+                                            }
+                                        }}
+                                    />
+                                ))}
+                                <FormControlLabel
+                                    value=""
+                                    control={<Radio size="small" />}
+                                    label={
+                                        <Typography variant="body2">
+                                            No Preference
+                                        </Typography>
+                                    }
+                                    sx={{
+                                        m: 0,
+                                        '& .MuiFormControlLabel-label': {
+                                            fontSize: '0.875rem'
+                                        }
+                                    }}
+                                />
+                            </RadioGroup>
+                        </Box>
+                    </Box>
+
+                    {/* UPDATED Custom Notes with Global Security */}
                     <Box>
                         <Typography variant="subtitle2" gutterBottom sx={{ mb: 2, pl: 0 }}>
                             Notes:
@@ -134,19 +203,25 @@ export function ProductSpecialRequestForm({ onRequestChange }) {
                                 multiline
                                 rows={3}
                                 variant="outlined"
-                                placeholder="Enter any additional special requests here..."
-                                value={customRequests}
-                                onChange={handleCustomRequestChange}
+                                placeholder={`Enter any additional special requests here... (max ${customRequestsInput.maxLength} characters)`}
+                                value={customRequestsInput.value}
+                                onChange={customRequestsInput.handleChange}
+                                onPaste={customRequestsInput.handlePaste}
+                                error={!customRequestsInput.isValid}
+                                helperText={customRequestsInput.helperText}
+                                inputProps={{
+                                    maxLength: customRequestsInput.maxLength,
+                                }}
                                 sx={{
                                     '& .MuiOutlinedInput-root': {
                                         '& fieldset': {
-                                            borderColor: 'grey.300',
+                                            borderColor: customRequestsInput.error ? 'error.main' : 'grey.300',
                                         },
                                         '&:hover fieldset': {
-                                            borderColor: 'primary.main',
+                                            borderColor: customRequestsInput.error ? 'error.main' : 'primary.main',
                                         },
                                         '&.Mui-focused fieldset': {
-                                            borderColor: 'primary.main',
+                                            borderColor: customRequestsInput.error ? 'error.main' : 'primary.main',
                                         },
                                     },
                                 }}
@@ -154,10 +229,16 @@ export function ProductSpecialRequestForm({ onRequestChange }) {
                         </Box>
                     </Box>
 
-                    {customRequests && (
+                    {/* UPDATED Character count with error display */}
+                    {customRequestsInput.value && (
                         <Box sx={{ mt: 2, p: 1.5, backgroundColor: 'grey.50', borderRadius: 1 }}>
                             <Typography variant="caption" color="text.secondary">
-                                Character count: {customRequests.length}
+                                Character count: {customRequestsInput.characterCount}/{customRequestsInput.maxLength}
+                                {customRequestsInput.error && (
+                                    <span style={{ color: '#d32f2f', marginLeft: '10px' }}>
+                                        ⚠️ {customRequestsInput.error}
+                                    </span>
+                                )}
                             </Typography>
                         </Box>
                     )}

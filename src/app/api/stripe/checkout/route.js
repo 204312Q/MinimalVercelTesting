@@ -3,34 +3,8 @@ const stripe = require('stripe')(process.env.NEXT_STRIPE_SECRET_KEY);
 
 export const POST = async (request) => {
   try {
-    // 1. Parse body - now includes full order details
-    const { products, orderDetails, paymentType, sessionId } = await request.json();
-
-    // If sessionId is provided, retrieve the existing session data from metadata
-    if (sessionId) {
-      try {
-        const existingSession = await stripe.checkout.sessions.retrieve(sessionId);
-
-        if (existingSession.metadata?.orderData1) {
-          // Reconstruct the order data from multiple metadata fields
-          let orderDataString = existingSession.metadata.orderData1;
-          if (existingSession.metadata.orderData2) {
-            orderDataString += existingSession.metadata.orderData2;
-          }
-          if (existingSession.metadata.orderData3) {
-            orderDataString += existingSession.metadata.orderData3;
-          }
-
-          const storedOrderData = JSON.parse(orderDataString);
-
-          // Recreate session with the same data
-          return await createNewSession(storedOrderData.products, storedOrderData.orderDetails, storedOrderData.paymentType, request);
-        }
-      } catch (error) {
-        console.error('Failed to retrieve session metadata:', error);
-        // Fall back to creating new session if retrieval fails
-      }
-    }
+    // Parse body - get the order details directly
+    const { products, orderDetails, paymentType } = await request.json();
 
     // Create new session with provided data
     return await createNewSession(products, orderDetails, paymentType, request);
@@ -43,13 +17,13 @@ export const POST = async (request) => {
 
 // Helper function to create a new session
 async function createNewSession(products, orderDetails, paymentType, request) {
-  // 2. Check if this is a partial payment
+  // Check if this is a partial payment
   const isPartialPayment = paymentType === 'partial';
   const depositAmount = orderDetails?.deliveryInfo?.paymentAmounts?.depositAmount || 100;
   const totalAmount = orderDetails?.pricing?.total || 0;
   const balancePayable = orderDetails?.deliveryInfo?.paymentAmounts?.balancePayable || 0;
 
-  // 3. Calculate discount amount for full orders
+  // Calculate discount amount for full orders
   const discountAmount = orderDetails?.pricing?.totalDiscount ||
     orderDetails?.pricing?.promoDiscount ||
     (orderDetails?.pricing?.appliedPromo?.discountAmount) || 0;
@@ -70,7 +44,7 @@ async function createNewSession(products, orderDetails, paymentType, request) {
       quantity: 1,
     });
   } else {
-    // Full payment logic (your existing code)
+    // Full payment logic
     if (discountAmount > 0) {
       // Apply discount proportionally to each product using price_data
       const originalTotal = products.reduce((sum, product) => sum + (product.price * product.quantity), 0);
@@ -127,7 +101,7 @@ async function createNewSession(products, orderDetails, paymentType, request) {
     }
   }
 
-  // 4. Create checkout session with SPLIT metadata
+  // Create checkout session with metadata
   const origin = request.headers.get('origin') ||
     request.headers.get('host') && `https://${request.headers.get('host')}` ||
     'http://localhost:3032'; // fallback for development
@@ -157,9 +131,8 @@ async function createNewSession(products, orderDetails, paymentType, request) {
   const session = await stripe.checkout.sessions.create({
     line_items: stripeProducts,
     mode: 'payment',
-    success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${origin}/checkout/cancel`,
-    // cancel_url: `${origin}/checkout/cancel?order_id=${orderId}`,
+    success_url: `${origin}/products?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${origin}/products`,
     customer_email: orderDetails?.deliveryInfo?.email,
     metadata: metadata
   });

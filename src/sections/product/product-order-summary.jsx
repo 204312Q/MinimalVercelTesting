@@ -14,6 +14,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 
 import { validatePromoCode } from 'src/utils/product-promotion';
+import { useSecureInput } from 'src/hooks/useSecureInput';
 
 export function ProductOrderSummary({
     selectedCategory,
@@ -24,7 +25,7 @@ export function ProductOrderSummary({
     isDeliveryValid = false,
     onPricingChange,
 }) {
-    const [promoCode, setPromoCode] = useState('');
+    const promoCodeInput = useSecureInput('', 20);
     const [appliedPromo, setAppliedPromo] = useState(null);
     const [promoError, setPromoError] = useState('');
     const [isProcessingCheckout, setIsProcessingCheckout] = useState(false);
@@ -94,17 +95,29 @@ export function ProductOrderSummary({
 
     // Event handlers
     const handlePromoCodeChange = useCallback((e) => {
-        setPromoCode(e.target.value.toUpperCase());
+        const upperCaseValue = e.target.value.toUpperCase();
+        const syntheticEvent = { target: { value: upperCaseValue } };
+        promoCodeInput.handleChange(syntheticEvent);
         setPromoError('');
-    }, []);
+    }, [promoCodeInput]);
 
     const handleApplyPromoCode = useCallback(() => {
-        if (!promoCode.trim()) {
+        if (promoCodeInput.error) {
+            setPromoError(promoCodeInput.error);
+            return;
+        }
+
+        if (!promoCodeInput.value.trim()) {
             setPromoError('Please enter a promo code');
             return;
         }
 
-        const validation = validatePromoCode(promoCode, orderData, selectedAddOns);
+        if (!/^[A-Z0-9]+$/.test(promoCodeInput.value)) {
+            setPromoError('Promo code can only contain letters and numbers');
+            return;
+        }
+
+        const validation = validatePromoCode(promoCodeInput.value, orderData, selectedAddOns);
 
         if (validation.valid) {
             setAppliedPromo(validation);
@@ -113,13 +126,13 @@ export function ProductOrderSummary({
             setAppliedPromo(null);
             setPromoError(validation.error);
         }
-    }, [promoCode, orderData, selectedAddOns]);
+    }, [promoCodeInput.value, promoCodeInput.error, orderData, selectedAddOns]);
 
     const handleRemovePromoCode = useCallback(() => {
         setAppliedPromo(null);
-        setPromoCode('');
+        promoCodeInput.reset();
         setPromoError('');
-    }, []);
+    }, [promoCodeInput]);
 
     const handleProceedClick = useCallback(async () => {
         if (!isFormValid) {
@@ -365,7 +378,7 @@ export function ProductOrderSummary({
 
             <PromoCodeSection
                 appliedPromo={appliedPromo}
-                promoCode={promoCode}
+                promoCodeInput={promoCodeInput}
                 promoError={promoError}
                 onPromoCodeChange={handlePromoCodeChange}
                 onApplyPromoCode={handleApplyPromoCode}
@@ -407,7 +420,7 @@ export function ProductOrderSummary({
     ), [
         pricingData,
         appliedPromo,
-        promoCode,
+        promoCodeInput,
         promoError,
         handlePromoCodeChange,
         handleApplyPromoCode,
@@ -509,7 +522,7 @@ const PaymentBreakdownSection = ({ paymentAmounts }) => (
 
 const PromoCodeSection = ({
     appliedPromo,
-    promoCode,
+    promoCodeInput,
     promoError,
     onPromoCodeChange,
     onApplyPromoCode,
@@ -521,10 +534,15 @@ const PromoCodeSection = ({
                 <TextField
                     placeholder="DISCOUNT5"
                     size="small"
-                    value={promoCode}
+                    value={promoCodeInput.value}
                     onChange={onPromoCodeChange}
+                    onPaste={promoCodeInput.handlePaste}
                     fullWidth
-                    error={!!promoError}
+                    error={!!(promoError || promoCodeInput.error)}
+                    inputProps={{
+                        maxLength: promoCodeInput.maxLength,
+                        style: { textTransform: 'uppercase' }
+                    }}
                     InputProps={{
                         endAdornment: (
                             <InputAdornment position="end">
@@ -539,6 +557,7 @@ const PromoCodeSection = ({
                                         px: 1
                                     }}
                                     onClick={onApplyPromoCode}
+                                    disabled={!promoCodeInput.value.trim() || !!promoCodeInput.error}
                                 >
                                     Apply
                                 </Button>
@@ -549,20 +568,20 @@ const PromoCodeSection = ({
                         '& .MuiOutlinedInput-root': {
                             backgroundColor: 'white',
                             '& fieldset': {
-                                borderColor: 'grey.300',
+                                borderColor: (promoError || promoCodeInput.error) ? 'error.main' : 'grey.300',
                             },
                             '&:hover fieldset': {
-                                borderColor: 'primary.main',
+                                borderColor: (promoError || promoCodeInput.error) ? 'error.main' : 'primary.main',
                             },
                             '&.Mui-focused fieldset': {
-                                borderColor: 'primary.main',
+                                borderColor: (promoError || promoCodeInput.error) ? 'error.main' : 'primary.main',
                             },
                         },
                     }}
                 />
-                {promoError && (
+                {(promoError || promoCodeInput.error) && (
                     <Typography variant="caption" color="error" sx={{ mt: 0.5, display: 'block' }}>
-                        {promoError}
+                        {promoError || promoCodeInput.error}
                     </Typography>
                 )}
             </>

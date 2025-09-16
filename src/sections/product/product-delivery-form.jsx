@@ -7,91 +7,107 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 
-export function ProductDeliveryForm({ onDeliveryDataChange, onValidationChange, orderTotal = 0, discountAmount = 0 }) {
-    const [deliveryData, setDeliveryData] = useState({
-        fullName: '',
-        phone: '',
-        email: '',
-        address: '',
-        floor: '',
-        unit: '',
-        postalCode: '',
-        paymentMethod: 'full',
-    });
+// UPDATED SECURITY IMPORTS
+import { SECURITY_CONFIG } from 'src/utils/security';
+import { useSecureInput, useSecureEmailInput, useSecurePhoneInput } from 'src/hooks/useSecureInput';
 
-    const [errors, setErrors] = useState({});
+export function ProductDeliveryForm({ onDeliveryDataChange, onValidationChange, orderTotal = 0, discountAmount = 0 }) {
+    // REPLACE useState with secure input hooks
+    const fullNameInput = useSecureInput('', SECURITY_CONFIG.MAX_NAME_LENGTH);
+    const phoneInput = useSecurePhoneInput('');
+    const emailInput = useSecureEmailInput('');
+    const addressInput = useSecureInput('', SECURITY_CONFIG.MAX_ADDRESS_LENGTH);
+    const floorInput = useSecureInput('', 2);
+    const unitInput = useSecureInput('', 4);
+    const postalCodeInput = useSecureInput('', 6);
+
+    const [paymentMethod, setPaymentMethod] = useState('full');
     const [touchedFields, setTouchedFields] = useState({});
 
-    // Validation rules
+    // CREATE deliveryData from secure inputs
+    const deliveryData = useMemo(() => ({
+        fullName: fullNameInput.value,
+        phone: phoneInput.value,
+        email: emailInput.value,
+        address: addressInput.value,
+        floor: floorInput.value,
+        unit: unitInput.value,
+        postalCode: postalCodeInput.value,
+        paymentMethod,
+    }), [
+        fullNameInput.value,
+        phoneInput.value,
+        emailInput.value,
+        addressInput.value,
+        floorInput.value,
+        unitInput.value,
+        postalCodeInput.value,
+        paymentMethod
+    ]);
+
+    // SIMPLIFIED validation rules using hook validation
     const validationRules = useMemo(() => ({
-        fullName: (value) => !value.trim() ? 'Full name is required' : null,
-        email: (value) => {
-            if (!value.trim()) return 'Email is required';
-            if (!/\S+@\S+\.\S+/.test(value)) return 'Email is invalid';
-            return null;
+        fullName: (input) => {
+            if (!input.value.trim()) return 'Full name is required';
+            return input.error;
         },
-        phone: (value) => !value.trim() ? 'Phone number is required' : null,
-        address: (value) => !value.trim() ? 'Address is required' : null,
-        postalCode: (value) => {
-            if (!value.trim()) return 'Postal code is required';
-            if (!/^\d{6}$/.test(value)) return 'Postal code must be 6 digits';
-            return null;
-        }
+        email: (input) => {
+            if (!input.value.trim()) return 'Email is required';
+            return input.error || input.emailError;
+        },
+        phone: (input) => {
+            if (!input.value.trim()) return 'Phone number is required';
+            return input.error || input.phoneError;
+        },
+        address: (input) => {
+            if (!input.value.trim()) return 'Address is required';
+            return input.error;
+        },
+        postalCode: (input) => {
+            if (!input.value.trim()) return 'Postal code is required';
+            if (!/^\d{6}$/.test(input.value)) return 'Postal code must be 6 digits';
+            return input.error;
+        },
+        floor: (input) => input.error,
+        unit: (input) => input.error
     }), []);
 
-    // Handle input changes
-    const handleInputChange = useCallback((field) => (e) => {
-        const value = e.target.value;
-
-        setDeliveryData(prev => ({ ...prev, [field]: value }));
+    // Handle field touches
+    const handleFieldTouch = useCallback((field) => {
         setTouchedFields(prev => ({ ...prev, [field]: true }));
-
-        // Clear error when user starts typing
-        if (errors[field]) {
-            setErrors(prev => {
-                const newErrors = { ...prev };
-                delete newErrors[field];
-                return newErrors;
-            });
-        }
-    }, [errors]);
+    }, []);
 
     // Handle payment method change
     const handlePaymentMethodChange = useCallback((method) => {
-        setDeliveryData(prev => ({ ...prev, paymentMethod: method }));
+        setPaymentMethod(method);
     }, []);
 
-    // Validation function
+    // SIMPLIFIED validation function
     const validateForm = useCallback(() => {
-        const newErrors = {};
-
-        // Only show errors for touched fields
-        Object.keys(validationRules).forEach(field => {
-            if (touchedFields[field]) {
-                const error = validationRules[field](deliveryData[field]);
-                if (error) newErrors[field] = error;
-            }
-        });
-
-        setErrors(newErrors);
-
-        // Check if all required fields are valid (regardless of touched state)
-        const isFormValid = Object.keys(validationRules).every(field =>
-            !validationRules[field](deliveryData[field])
-        );
+        // Check if all required fields are valid
+        const isFormValid =
+            fullNameInput.value.trim() && !validationRules.fullName(fullNameInput) &&
+            phoneInput.value.trim() && !validationRules.phone(phoneInput) &&
+            emailInput.value.trim() && !validationRules.email(emailInput) &&
+            addressInput.value.trim() && !validationRules.address(addressInput) &&
+            postalCodeInput.value.trim() && !validationRules.postalCode(postalCodeInput) &&
+            /^\d{6}$/.test(postalCodeInput.value);
 
         if (onValidationChange) {
             onValidationChange(isFormValid);
         }
 
         return isFormValid;
-    }, [deliveryData, touchedFields, validationRules, onValidationChange]);
+    }, [
+        fullNameInput, phoneInput, emailInput, addressInput,
+        floorInput, unitInput, postalCodeInput, validationRules, onValidationChange
+    ]);
 
     // Payment calculation
     const paymentAmounts = useMemo(() => {
         const finalTotal = Math.max(0, orderTotal - discountAmount);
 
-        if (deliveryData.paymentMethod === 'partial') {
+        if (paymentMethod === 'partial') {
             const depositAmount = 100;
             const balancePayable = Math.max(0, finalTotal - depositAmount);
 
@@ -107,7 +123,7 @@ export function ProductDeliveryForm({ onDeliveryDataChange, onValidationChange, 
             balancePayable: 0,
             totalAmount: finalTotal
         };
-    }, [deliveryData.paymentMethod, orderTotal, discountAmount]);
+    }, [paymentMethod, orderTotal, discountAmount]);
 
     // Notify parent of delivery data changes
     useEffect(() => {
@@ -127,26 +143,32 @@ export function ProductDeliveryForm({ onDeliveryDataChange, onValidationChange, 
     // Check if partial payment is available
     const isPartialPaymentAvailable = orderTotal >= 728;
 
-    // Form fields configuration
+    // UPDATED form fields configuration with secure inputs
     const formFields = useMemo(() => [
         {
             name: 'fullName',
             label: 'Full name',
             required: true,
-            placeholder: ''
+            placeholder: '',
+            input: fullNameInput,
+            validation: validationRules.fullName
         },
         {
             name: 'phone',
             label: 'Phone number',
             required: true,
-            placeholder: 'e.g., 91234567'
+            placeholder: 'e.g., 91234567',
+            input: phoneInput,
+            validation: validationRules.phone
         },
         {
             name: 'email',
             label: 'Email',
             type: 'email',
             required: true,
-            placeholder: ''
+            placeholder: '',
+            input: emailInput,
+            validation: validationRules.email
         },
         {
             name: 'address',
@@ -154,29 +176,40 @@ export function ProductDeliveryForm({ onDeliveryDataChange, onValidationChange, 
             required: true,
             multiline: true,
             rows: 2,
-            placeholder: 'Block, Street Name'
+            placeholder: 'Block, Street Name',
+            input: addressInput,
+            validation: validationRules.address
         },
         {
             name: 'floor',
             label: 'Floor',
             required: false,
             placeholder: 'e.g., 12',
-            width: 6
+            width: 6,
+            input: floorInput,
+            validation: validationRules.floor
         },
         {
             name: 'unit',
             label: 'Unit',
             required: false,
             placeholder: 'e.g., 34',
-            width: 6
+            width: 6,
+            input: unitInput,
+            validation: validationRules.unit
         },
         {
             name: 'postalCode',
             label: 'Postal Code',
             required: true,
-            placeholder: 'e.g., 123456'
+            placeholder: 'e.g., 123456',
+            input: postalCodeInput,
+            validation: validationRules.postalCode
         }
-    ], []);
+    ], [
+        fullNameInput, phoneInput, emailInput, addressInput,
+        floorInput, unitInput, postalCodeInput, validationRules
+    ]);
 
     return (
         <Card sx={{
@@ -191,17 +224,16 @@ export function ProductDeliveryForm({ onDeliveryDataChange, onValidationChange, 
                 borderRadius: 2,
                 gridTemplateColumns: { xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' },
             }}>
-                {/* Delivery Address Section */}
+                {/* UPDATED Delivery Address Section */}
                 <DeliveryAddressSection
                     formFields={formFields}
-                    deliveryData={deliveryData}
-                    errors={errors}
-                    onInputChange={handleInputChange}
+                    touchedFields={touchedFields}
+                    onFieldTouch={handleFieldTouch}
                 />
 
                 {/* Payment Method Section */}
                 <PaymentMethodSection
-                    paymentMethod={deliveryData.paymentMethod}
+                    paymentMethod={paymentMethod}
                     paymentAmounts={paymentAmounts}
                     isPartialPaymentAvailable={isPartialPaymentAvailable}
                     onPaymentMethodChange={handlePaymentMethodChange}
@@ -211,48 +243,69 @@ export function ProductDeliveryForm({ onDeliveryDataChange, onValidationChange, 
     );
 }
 
-// Delivery Address Section Component
-const DeliveryAddressSection = ({ formFields, deliveryData, errors, onInputChange }) => (
+// UPDATED Delivery Address Section Component
+const DeliveryAddressSection = ({ formFields, touchedFields, onFieldTouch }) => (
     <div>
         <Typography variant="h6" gutterBottom sx={{ mb: 3, fontWeight: 600 }}>
             Delivery Address*
         </Typography>
 
         <Grid container spacing={0}>
-            {formFields.map((field) => (
-                <Grid
-                    key={field.name}
-                    item
-                    xs={field.width || 12}
-                    sx={{ padding: '0 !important', margin: '0 !important' }}
-                >
-                    <TextField
-                        fullWidth
-                        label={field.label}
-                        type={field.type || 'text'}
-                        required={field.required}
-                        multiline={field.multiline}
-                        rows={field.rows}
-                        value={deliveryData[field.name]}
-                        onChange={onInputChange(field.name)}
-                        error={!!errors[field.name]}
-                        helperText={errors[field.name]}
-                        placeholder={field.placeholder}
-                        size="medium"
-                        sx={{
-                            margin: '4px 0',
-                            ...(field.width === 6 && field.name === 'floor' && { marginRight: '4px' }),
-                            ...(field.width === 6 && field.name === 'unit' && { marginLeft: '4px' }),
-                            '& .MuiOutlinedInput-root': {
-                                paddingLeft: '0 !important',
-                            },
-                            '& .MuiInputBase-input': {
-                                paddingLeft: '14px !important',
-                            }
-                        }}
-                    />
-                </Grid>
-            ))}
+            {formFields.map((field) => {
+                const error = touchedFields[field.name] ? field.validation(field.input) : null;
+
+                return (
+                    <Grid
+                        key={field.name}
+                        item
+                        xs={field.width || 12}
+                        sx={{ padding: '0 !important', margin: '0 !important' }}
+                    >
+                        <TextField
+                            fullWidth
+                            label={field.label}
+                            type={field.type || 'text'}
+                            required={field.required}
+                            multiline={field.multiline}
+                            rows={field.rows}
+                            value={field.input.value}
+                            onChange={(e) => {
+                                field.input.handleChange(e);
+                                onFieldTouch(field.name);
+                            }}
+                            onPaste={field.input.handlePaste}
+                            onBlur={() => onFieldTouch(field.name)}
+                            error={!!error}
+                            helperText={error || field.input.helperText}
+                            placeholder={field.placeholder}
+                            size="medium"
+                            inputProps={{
+                                maxLength: field.input.maxLength,
+                            }}
+                            sx={{
+                                margin: '4px 0',
+                                ...(field.width === 6 && field.name === 'floor' && { marginRight: '4px' }),
+                                ...(field.width === 6 && field.name === 'unit' && { marginLeft: '4px' }),
+                                '& .MuiOutlinedInput-root': {
+                                    paddingLeft: '0 !important',
+                                    '& fieldset': {
+                                        borderColor: error ? 'error.main' : 'grey.300',
+                                    },
+                                    '&:hover fieldset': {
+                                        borderColor: error ? 'error.main' : 'primary.main',
+                                    },
+                                    '&.Mui-focused fieldset': {
+                                        borderColor: error ? 'error.main' : 'primary.main',
+                                    },
+                                },
+                                '& .MuiInputBase-input': {
+                                    paddingLeft: '14px !important',
+                                }
+                            }}
+                        />
+                    </Grid>
+                );
+            })}
         </Grid>
     </div>
 );
@@ -284,7 +337,6 @@ const PaymentMethodSection = ({
                     isSelected={paymentMethod === 'partial'}
                     onClick={() => onPaymentMethodChange('partial')}
                     title="Partial (Deposit)"
-                    description={`Pay $${paymentAmounts.depositAmount} now, balance $${paymentAmounts.balancePayable.toFixed(2)} pay later`}
                 />
             )}
         </Box>
@@ -292,7 +344,7 @@ const PaymentMethodSection = ({
 );
 
 // Payment Option Component
-const PaymentOption = ({ isSelected, onClick, title, description }) => (
+const PaymentOption = ({ isSelected, onClick, title }) => (
     <Box
         sx={[
             (theme) => ({
@@ -344,14 +396,6 @@ const PaymentOption = ({ isSelected, onClick, title, description }) => (
                 }}>
                     {title}
                 </Box>
-                {description && (
-                    <Box component="span" sx={{
-                        typography: 'caption',
-                        color: 'text.secondary'
-                    }}>
-                        {description}
-                    </Box>
-                )}
             </Box>
         </Box>
     </Box>
