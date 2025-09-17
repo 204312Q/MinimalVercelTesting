@@ -12,31 +12,40 @@ import { varFade, MotionViewport } from 'src/components/animate';
 export function AboutVision({ sx, ...other }) {
 
   return (
-
-    <Container component={MotionViewport}>
-      <Box
-        sx={{
-          borderRadius: 2,
-          display: 'flex',
-          overflow: 'hidden',
-          position: 'relative',
-          alignItems: 'center',
-          justifyContent: 'center',
-          my: 5,
-          py: 5
-        }}
-      >
-        <Typography
-          component={m.h6}
-          variants={varFade('inUp')}
-          variant="h5"
-          color="primary"
-          sx={{ textAlign: 'center', maxWidth: 800, mx: 'auto' }}
+    <Box
+      component="section"
+      sx={[
+        {
+          py: { xs: 10, md: 10 },
+        },
+        ...(Array.isArray(sx) ? sx : [sx])
+      ]}
+      {...other}
+    >
+      <Container component={MotionViewport}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            textAlign: 'center'
+          }}
         >
-          We strongly believe new mothers can greatly benefit by getting more rest, instead of feeling the need to bounce right back after childbirth.
-
-        </Typography>
-      </Box>
-    </Container>
+          <Typography
+            component={m.h2}
+            variants={varFade('inUp')}
+            variant="h2"
+            sx={{
+              color: 'primary.main',
+              fontWeight: 'bold',
+              maxWidth: 800,
+              mx: 'auto'
+            }}
+          >
+            Trusted By Mothers Since 2011
+          </Typography>
+        </Box>
+      </Container>
+    </Box>
   );
 }

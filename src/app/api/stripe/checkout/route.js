@@ -131,7 +131,7 @@ async function createNewSession(products, orderDetails, paymentType, request) {
   const session = await stripe.checkout.sessions.create({
     line_items: stripeProducts,
     mode: 'payment',
-    success_url: `${origin}/products?session_id={CHECKOUT_SESSION_ID}`,
+    success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}/products`,
     customer_email: orderDetails?.deliveryInfo?.email,
     metadata: metadata

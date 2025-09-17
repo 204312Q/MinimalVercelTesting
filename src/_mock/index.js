@@ -1,10 +1,7 @@
-// export * from './_job';
 
 export * from './_mock';
 
 export * from './_user';
-
-// export * from './_tour';
 
 export * from './_blog';
 

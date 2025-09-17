@@ -24,7 +24,7 @@ export function AboutWhat({ sx, ...other }) {
     >
       <Container
         component={MotionViewport}
-        sx={{ py: { xs: 10, md: 7 }, textAlign: { xs: 'center', md: 'left' } }}
+        sx={{ pt: { xs: 10, md: 12 }, pb: 4, textAlign: { xs: 'center', md: 'left' } }}
       >
         <Grid
           container
@@ -40,17 +40,13 @@ export function AboutWhat({ sx, ...other }) {
                 <Image
                   alt="Chilli Padi Owner"
                   src={`${CONFIG.assetsDir}/aboutUs/owner.jpeg`}
-                  ratio="3/4"
-                  sx={(theme) => ({
+                  ratio="1/1"
+                  sx={{
                     borderRadius: 3,
-                    boxShadow: `-40px 40px 80px ${varAlpha(
-                      theme.vars.palette.grey['500Channel'],
-                      0.24
-                    )}`,
                     width: '100%',
                     height: 'auto',
                     objectFit: 'cover',
-                  })}
+                  }}
                 />
               </m.div>
             </Box>
@@ -64,7 +60,7 @@ export function AboutWhat({ sx, ...other }) {
               </Typography>
 
               <Typography component={m.p} variants={varFade('inRight')} sx={{ color: 'text.secondary', mt: 3 }}>
-                Over the years, Chilli Padi has received numerous accolades including the coveted Singapore’s Best Restaurant by Singapore Tatler, Asia Pacific Brands Award and Promising SME500, among others. In particular, the Singapore Tourism Board proudly recommends the international media to Chilli Padi’s cuisine as a fine exemplary of Singapore’s rich food heritage.
+                Over the years, Chilli Padi has received numerous accolades including the coveted Singapore's Best Restaurant by Singapore Tatler, Asia Pacific Brands Award and Promising SME500, among others. In particular, the Singapore Tourism Board proudly recommends the international media to Chilli Padi's cuisine as a fine exemplary of Singapore's rich food heritage.
               </Typography>
               <Typography component={m.p} variants={varFade('inRight')} sx={{ color: 'text.secondary', mt: 3 }}>
                 In 2011, we initially offered our confinement meals at our restaurant. Encouraged by the positive response and demand for our meals, we expanded our portfolio to cater confinement meal catering service aimed to aid mummies in their postpartum recovery.              </Typography>

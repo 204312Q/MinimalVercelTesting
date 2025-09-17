@@ -1,20 +1,84 @@
-//get the image from cloudinary
+// Cloudinary configuration
+// NEED THE ENV FOR CLOUDINARY
+// const CLOUDINARY_CONFIG = {
+//   cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'your-cloud-name',
+//   folder: 'logo', // Optional: organize images in folders
+//   version: 'v1234567890' // Optional: for cache busting
+// };
+
+// Generate Cloudinary URL
+// const getCloudinaryImageUrl = (publicId, options = {}) => {
+//   const {
+//     width = 160,
+//     height = 80,
+//     format = 'auto',
+//     quality = 'auto',
+//     crop = 'scale'
+//   } = options;
+
+//   return `https://res.cloudinary.com/${CLOUDINARY_CONFIG.cloudName}/image/upload/w_${width},h_${height},c_${crop},f_${format},q_${quality}/${CLOUDINARY_CONFIG.folder}/${publicId}`;
+// };
+
+// Logo URL with optimizations for email
+// const logoUrl = getCloudinaryImageUrl('chilli-padi-logo', {
+//   width: 160,
+//   height: 80,
+//   format: 'png',
+//   quality: '80'
+// });
 
 // Full Payment Confirmation Template
-export function fullPaymentConfirmationTemplate({
-  date,
-  confirmationNo,
-  delivery,
-  items,
-  startType,
-  startWith,
-  subtotal,
-  discount,
-  tax,
-  total,
-}) {
+export function fullPaymentConfirmationTemplate(order) {
+  const {
+    id: confirmationNo,
+    createdAt,
+    serviceDate,
+    inputType,
+    session,
+    lineItems = [],
+    requests = [],
+    note,
+    pricing = {},
+    delivery = {},
+    customer = {}
+  } = order;
+
+  // Format date
+  const orderDate = new Date(createdAt).toLocaleDateString('en-SG', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  // Build items array from lineItems
+  const items = lineItems.map(item => ({
+    quantity: item.quantity,
+    name: `${item.productName}${item.option?.value ? ` - ${item.option.value}` : ''}`,
+    dateSelected: serviceDate,
+    gst: `$${(item.lineTotal * 0.09 / 1.09).toFixed(2)}`, // 9% GST inclusive
+    price: item.lineTotal.toFixed(2)
+  }));
+
+  // Format special requests
+  const specialRequests = [];
+  if (requests?.length > 0) {
+    specialRequests.push(...requests.map(req => req.code || req.value));
+  }
+  if (note?.trim()) {
+    specialRequests.push(note.trim());
+  }
+
+  // Build delivery address
+  const deliveryAddress = `${delivery.addressLine || ''}${delivery.floor ? `, #${delivery.floor}` : ''}${delivery.unit ? `-${delivery.unit}` : ''}, Singapore ${delivery.postalCode || ''}`.trim();
+
   return `
-    <div style="font-family: Arial, sans-serif; color: #222; max-width: 700px; margin: auto; margin-bottom: 24px; margin-top: 24px;"
+    <div style="font-family: Arial, sans-serif; color: #222; max-width: 700px; margin: auto; margin-bottom: 24px; margin-top: 24px;">
+      <img src="" 
+           alt="Chilli Padi Confinement Logo" 
+           style="height: 80px; width: auto; margin-bottom: 16px; display: block;"
+           width="160" 
+           height="80" />
+
       <div style="margin-bottom: 8px;">
         <div>
           Blk 3015 Bedok North Street 5 #04-19 <br/>
@@ -22,7 +86,7 @@ export function fullPaymentConfirmationTemplate({
           Singapore 486350
         </div>
         <div style="float: right; text-align: right;">
-          <div>Order Created on ${date}</div>
+          <div>Order Created on ${orderDate}</div>
           <div>Order ID : ${confirmationNo}</div>
           <div>UEN: 200301089E</div>
         </div>
@@ -32,9 +96,10 @@ export function fullPaymentConfirmationTemplate({
       <hr />
 
       <h3 style="margin-bottom: 4px;">Delivery Details</h3>
-      <div><strong>Name:</strong> ${delivery.name}</div>
-      <div><strong>Contact:</strong> ${delivery.contact}</div>
-      <div><strong>Address:</strong> ${delivery.address}</div>
+      <div><strong>Name:</strong> ${delivery.fullName || customer.name || ''}</div>
+      <div><strong>Contact:</strong> ${delivery.phone || customer.phone || ''}</div>
+      <div><strong>Email:</strong> ${delivery.email || customer.email || ''}</div>
+      <div><strong>Address:</strong> ${deliveryAddress}</div>
 
       <h3 style="margin-top: 24px; margin-bottom: 4px;">Order Details</h3>
       <table width="100%" style="border-collapse: collapse; margin-bottom: 12px;">
@@ -62,8 +127,9 @@ export function fullPaymentConfirmationTemplate({
       </table>
 
       <div style="margin-bottom: 12px;">
-        <strong>Start Type:</strong> ${startType || '-'}<br/>
-        <strong>Start With:</strong> ${startWith || '-'}
+        <strong>Service Type:</strong> ${inputType === 'EDD' ? 'Expected Delivery Date' : 'Confirmed Start Date'}<br/>
+        <strong>Session:</strong> ${session ? session.charAt(0).toUpperCase() + session.slice(1).toLowerCase() : 'All Day'}
+        ${specialRequests.length > 0 ? `<br/><strong>Special Requests:</strong> ${specialRequests.join('; ')}` : ''}
       </div>
 
       <h3 style="margin-bottom: 4px;">Payment Details</h3>
@@ -71,21 +137,21 @@ export function fullPaymentConfirmationTemplate({
         <tbody>
           <tr>
             <td>Subtotal price:</td>
-            <td align="right">$${subtotal}</td>
+            <td align="right">$${(pricing.subtotal || 0).toFixed(2)}</td>
           </tr>
-          ${discount && Number(discount) > 0 ? `
+          ${pricing.discounts?.length > 0 ? pricing.discounts.map(discount => `
             <tr>
-              <td>Discount:</td>
-              <td align="right" style="color: #d32f2f;">-$${discount}</td>
+              <td>Discount (${discount.code}):</td>
+              <td align="right" style="color: #d32f2f;">-$${discount.amount.toFixed(2)}</td>
             </tr>
-          ` : ''}
+          `).join('') : ''}
           <tr>
-            <td>Total tax:</td>
-            <td align="right">$${tax}</td>
+            <td>Total tax (GST 9% inclusive):</td>
+            <td align="right">$${((pricing.total || 0) * 0.09 / 1.09).toFixed(2)}</td>
           </tr>
           <tr style="font-weight: bold; border-top: 2px solid #222;">
             <td>Total price:</td>
-            <td align="right">$${total}</td>
+            <td align="right">$${(pricing.total || 0).toFixed(2)}</td>
           </tr>
         </tbody>
       </table>
@@ -100,22 +166,57 @@ export function fullPaymentConfirmationTemplate({
 }
 
 // Partial Payment Confirmation Template
-export function partialPaymentTemplate({
-  date,
-  confirmationNo,
-  delivery,
-  items,
-  startType,
-  startWith,
-  subtotal,
-  discount,
-  tax,
-  total,
-  amountPaid,
-  outstanding,
-}) {
+export function partialPaymentTemplate(order) {
+  const {
+    id: confirmationNo,
+    createdAt,
+    serviceDate,
+    inputType,
+    session,
+    lineItems = [],
+    requests = [],
+    note,
+    pricing = {},
+    delivery = {},
+    customer = {}
+  } = order;
+
+  // Format date
+  const orderDate = new Date(createdAt).toLocaleDateString('en-SG', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  // Build items array from lineItems
+  const items = lineItems.map(item => ({
+    quantity: item.quantity,
+    name: `${item.productName}${item.option?.value ? ` - ${item.option.value}` : ''}`,
+    dateSelected: serviceDate,
+    gst: `$${(item.lineTotal * 0.09 / 1.09).toFixed(2)}`, // 9% GST inclusive
+    price: item.lineTotal.toFixed(2)
+  }));
+
+  // Format special requests
+  const specialRequests = [];
+  if (requests?.length > 0) {
+    specialRequests.push(...requests.map(req => req.code || req.value));
+  }
+  if (note?.trim()) {
+    specialRequests.push(note.trim());
+  }
+
+  // Build delivery address
+  const deliveryAddress = `${delivery.addressLine || ''}${delivery.floor ? `, #${delivery.floor}` : ''}${delivery.unit ? `-${delivery.unit}` : ''}, Singapore ${delivery.postalCode || ''}`.trim();
+
   return `
     <div style="font-family: Arial, sans-serif; color: #222; max-width: 700px; margin: auto;">
+      <img src="" 
+           alt="Chilli Padi Confinement Logo" 
+           style="height: 80px; width: auto; margin-bottom: 16px; display: block;"
+           width="160" 
+           height="80" />
+      
       <div style="margin-bottom: 8px;">
         <div>
           Blk 3015 Bedok North Street 5 #04-19<br/>
@@ -123,7 +224,7 @@ export function partialPaymentTemplate({
           Singapore 486350
         </div>
         <div style="float: right; text-align: right;">
-          <div>Order Created on ${date}</div>
+          <div>Order Created on ${orderDate}</div>
           <div>Order ID : ${confirmationNo}</div>
           <div>UEN: 200301089E</div>
         </div>
@@ -133,9 +234,10 @@ export function partialPaymentTemplate({
       <hr />
 
       <h3 style="margin-bottom: 4px;">Delivery Details</h3>
-      <div><strong>Name:</strong> ${delivery.name}</div>
-      <div><strong>Contact:</strong> ${delivery.contact}</div>
-      <div><strong>Address:</strong> ${delivery.address}</div>
+      <div><strong>Name:</strong> ${delivery.fullName || customer.name || ''}</div>
+      <div><strong>Contact:</strong> ${delivery.phone || customer.phone || ''}</div>
+      <div><strong>Email:</strong> ${delivery.email || customer.email || ''}</div>
+      <div><strong>Address:</strong> ${deliveryAddress}</div>
 
       <h3 style="margin-top: 24px; margin-bottom: 4px;">Order Details</h3>
       <table width="100%" style="border-collapse: collapse; margin-bottom: 12px;">
@@ -163,8 +265,9 @@ export function partialPaymentTemplate({
       </table>
 
       <div style="margin-bottom: 12px;">
-        <strong>Start Type:</strong> ${startType || '-'}<br/>
-        <strong>Start With:</strong> ${startWith || '-'}
+        <strong>Service Type:</strong> ${inputType === 'EDD' ? 'Expected Delivery Date' : 'Confirmed Start Date'}<br/>
+        <strong>Session:</strong> ${session ? session.charAt(0).toUpperCase() + session.slice(1).toLowerCase() : 'All Day'}
+        ${specialRequests.length > 0 ? `<br/><strong>Special Requests:</strong> ${specialRequests.join('; ')}` : ''}
       </div>
 
       <h3 style="margin-bottom: 4px;">Payment Details</h3>
@@ -172,29 +275,29 @@ export function partialPaymentTemplate({
         <tbody>
           <tr>
             <td>Subtotal price:</td>
-            <td align="right">$${subtotal}</td>
+            <td align="right">$${(pricing.subtotal || 0).toFixed(2)}</td>
           </tr>
-          ${discount && Number(discount) > 0 ? `
+          ${pricing.discounts?.length > 0 ? pricing.discounts.map(discount => `
             <tr>
-              <td>Discount:</td>
-              <td align="right" style="color: #d32f2f;">-$${discount}</td>
+              <td>Discount (${discount.code}):</td>
+              <td align="right" style="color: #d32f2f;">-$${discount.amount.toFixed(2)}</td>
             </tr>
-          ` : ''}
+          `).join('') : ''}
           <tr>
-            <td>Total tax:</td>
-            <td align="right">$${tax}</td>
+            <td>Total tax (GST 9% inclusive):</td>
+            <td align="right">$${((pricing.total || 0) * 0.09 / 1.09).toFixed(2)}</td>
           </tr>
           <tr>
             <td>Amount Paid (Deposit):</td>
-            <td align="right">$${amountPaid}</td>
+            <td align="right">$${(pricing.paid || 0).toFixed(2)}</td>
           </tr>
           <tr style="color: #d32f2f; font-weight: bold;">
             <td>Outstanding Balance:</td>
-            <td align="right">$${outstanding}</td>
+            <td align="right">$${(pricing.remaining || 0).toFixed(2)}</td>
           </tr>
           <tr style="font-weight: bold; border-top: 2px solid #222;">
             <td>Total price:</td>
-            <td align="right">$${total}</td>
+            <td align="right">$${(pricing.total || 0).toFixed(2)}</td>
           </tr>
         </tbody>
       </table>

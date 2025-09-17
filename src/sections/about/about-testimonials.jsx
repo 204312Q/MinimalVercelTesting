@@ -24,7 +24,11 @@ import { varFade, MotionViewport } from 'src/components/animate';
 
 export function AboutTestimonials({ sx, ...other }) {
   const renderLink = () => (
-    <Button color="primary" endIcon={<Iconify icon="eva:arrow-ios-forward-fill" />}>
+    <Button
+      color="primary"
+      endIcon={<Iconify icon="eva:arrow-ios-forward-fill" />}
+      sx={{ color: 'common.white' }}
+    >
       Read more
     </Button>
   );

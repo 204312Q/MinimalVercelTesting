@@ -24,46 +24,108 @@ export async function POST(request) {
       const session = event.data.object;
       console.log('Webhook processed successfully');
 
-      const templateData = {
-        date: '27/08/2025',
-        confirmationNo: 'CPC-13699',
-        payment_plan: 'partial',
-        delivery: {
-          name: 'Jen Chang',
-          contact: '+6591779126',
-          email: 'ellisemarimon991q@gmail.com',
-          address: '322B Anchorvale Drive #11-130<br/>Singapore 542322<br/>Singapore'
-        },
-        items: [
+      // Simulated order object matching your payload structure
+      const mockOrder = {
+        id: 'CPC-13699',
+        createdAt: '2025-08-27T10:30:00Z',
+        inputType: 'CONFIRMED',
+        serviceDate: '02-09-2025',
+        portion: 'TRIAL',
+        session: 'DINNER',
+        status: 'UNFULFILLED',
+        paymentPlan: 'PARTIAL',
+        lineItems: [
           {
+            id: 'li-1',
+            kind: 'PACKAGES',
+            option: {
+              label: 'Dinner',
+              value: 'Dinner'
+            },
             quantity: 1,
-            name: 'Trial Meal - Dinner',
-            dateSelected: '02-09-2025',
-            gst: '$3.14 GST',
-            price: '38.00'
+            productId: 'trial-meal',
+            productName: 'Trial Meal',
+            lineTotal: 38.00,
+            unitPrice: 38.00
           }
         ],
-        startType: 'Confirmed Start Date',
-        startWith: 'Lunch',
-        subtotal: '38.00',
-        discount: '5.00',
-        tax: '3.14',
-        total: '38.00',
-        amountPaid: '20.00',
-        outstanding: '18.00',
+        requests: [
+          {
+            id: 'req-1',
+            code: 'No Chicken',
+            label: 'Chicken',
+            value: 'No Chicken',
+            specialRequestId: 'sp-3'
+          }
+        ],
+        note: 'Please deliver before 6pm',
+        payments: [
+          {
+            id: 'pay-1',
+            kind: 'CHARGE',
+            purpose: 'DEPOSIT',
+            method: 'STRIPE',
+            status: 'PAID',
+            amount: 20.00,
+            createdAt: '2025-08-27T10:30:00Z',
+            paidAt: '2025-08-27T10:32:00Z',
+            stripe: {
+              paymentIntentId: 'pi_test123',
+              checkoutSessionId: 'cs_test123'
+            }
+          }
+        ],
+        pricing: {
+          currency: 'SGD',
+          subtotal: 43.00,
+          paid: 20.00,
+          total: 38.00,
+          remaining: 18.00,
+          discounts: [
+            {
+              code: 'TRIAL5',
+              type: 'percentage',
+              value: 5,
+              amount: 5.00
+            }
+          ]
+        },
+        promotions: [
+          {
+            code: 'TRIAL5',
+            type: 'percentage',
+            value: 5,
+            amount: 5.00
+          }
+        ],
+        delivery: {
+          fullName: 'Jen Chang',
+          phone: '+6591779126',
+          email: 'ellisemarimon991q@gmail.com',
+          floor: '11',
+          unit: '130',
+          addressLine: '322B Anchorvale Drive',
+          postalCode: '542322'
+        },
+        customer: {
+          id: 'cust-1',
+          name: 'Jen Chang',
+          email: 'ellisemarimon991q@gmail.com',
+          phone: '+6591779126'
+        }
       };
 
-      // Use string template functions (no JSX/renderToString needed)
-      const html = templateData.payment_plan === 'partial'
-        ? partialPaymentTemplate(templateData)
-        : fullPaymentConfirmationTemplate(templateData);
+      // Use the updated template functions with proper order object
+      const html = mockOrder.paymentPlan === 'PARTIAL'
+        ? partialPaymentTemplate(mockOrder)
+        : fullPaymentConfirmationTemplate(mockOrder);
 
       await fetch('https://minimal-vercel-testing.vercel.app/api/email' || 'https://localhost:3032/api/email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          to: templateData.delivery.email,
-          subject: 'Order Confirmation',
+          to: mockOrder.delivery.email,
+          subject: `Order Confirmation - ${mockOrder.id}`,
           html,
         }),
       });
