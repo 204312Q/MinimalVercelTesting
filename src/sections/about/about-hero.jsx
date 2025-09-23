@@ -1,12 +1,8 @@
 'use client';
-import { m } from 'framer-motion';
+
 import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
 
 import { CONFIG } from 'src/global-config';
-
-import { varFade, AnimateText, MotionContainer, animateTextClasses } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
 

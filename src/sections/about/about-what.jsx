@@ -1,6 +1,5 @@
 'use client';
 import { m } from 'framer-motion';
-import { varAlpha } from 'minimal-shared/utils';
 
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid2';
