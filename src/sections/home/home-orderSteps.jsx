@@ -2,7 +2,6 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import { CONFIG } from 'src/global-config';
 import { paths } from 'src/routes/paths';
 
 // Order steps data with your images

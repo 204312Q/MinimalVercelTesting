@@ -13,7 +13,10 @@ export const nourishMenuPool = {
                 english: "Stir Fried Nai Pa with Abalone Mushroom",
                 chinese: "奶白与鲍鱼菇",
             },
-            { english: "Fragrant White Rice", chinese: "白米饭" },
+            {
+                english: "Fragrant White Rice",
+                chinese: "白米饭"
+            },
         ],
         dinnerDishes: [
             {
@@ -28,7 +31,10 @@ export const nourishMenuPool = {
                 english: "Stir Fried Lotus With Sweet Peas and Ginkgo Nut",
                 chinese: "莲藕炒甜豆与白果",
             },
-            { english: "Mixed Five Grain Rice", chinese: "五谷米" },
+            {
+                english: "Mixed Five Grain Rice",
+                chinese: "五谷米"
+            },
         ],
     },
     1: {
@@ -45,7 +51,10 @@ export const nourishMenuPool = {
                 english: "Stir Fried HK Kai Lan with Shimeji Mushroom",
                 chinese: "香港芥兰与鸿喜菇",
             },
-            { english: "Fragrant White Rice", chinese: "白米饭" },
+            {
+                english: "Fragrant White Rice",
+                chinese: "白米饭"
+            },
         ],
         dinnerDishes: [
             { english: "Milk Boosting Fish and Papaya Soup", chinese: "木瓜鱼汤" },

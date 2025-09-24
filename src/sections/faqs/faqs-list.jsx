@@ -7,6 +7,7 @@ import Accordion from '@mui/material/Accordion';
 import Typography from '@mui/material/Typography';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
+import DOMPurify from 'dompurify';
 
 import { Iconify } from 'src/components/iconify';
 
@@ -109,11 +110,17 @@ export function FaqsList({ contents }) {
                       sx={{
                         color: 'text.secondary',
                         lineHeight: 1.6,
-                        whiteSpace: 'pre-line'
+                        whiteSpace: 'pre-line',
+                        '& a': {
+                          color: 'primary.main',
+                          textDecoration: 'none',
+                          '&:hover': {
+                            textDecoration: 'underline',
+                          },
+                        },
                       }}
-                    >
-                      {question.detail}
-                    </Typography>
+                      dangerouslySetInnerHTML={{ __html: question.detail }}
+                    />
                   </AccordionDetails>
                 </Accordion>
               ))}

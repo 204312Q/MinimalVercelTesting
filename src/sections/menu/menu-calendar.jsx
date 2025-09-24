@@ -115,11 +115,15 @@ export default function MenuPage() {
                                 py: 2,
                                 fontWeight: 'bold',
                                 minWidth: 80,
-                                backgroundColor: selectedWeek === week ? '#f27b96' : '#FACAD5',
-                                color: selectedWeek === week ? '#fff' : '#f27b96',
-                                borderColor: '#FACAD5',
+                                backgroundColor: selectedWeek === week
+                                    ? (week === 1 ? '#f27b96' : '#3e4f8b') // Pink for Week 1, Blue for Weeks 2-4
+                                    : (week === 1 ? '#FACAD5' : '#B3D9FF'), // Light pink for Week 1, Light blue for Weeks 2-4
+                                color: selectedWeek === week ? '#fff' : (week === 1 ? '#f27b96' : '#1976d2'),
+                                borderColor: week === 1 ? '#FACAD5' : '#B3D9FF',
                                 '&:hover': {
-                                    backgroundColor: selectedWeek === week ? '#e26782' : '#fce9ed',
+                                    backgroundColor: selectedWeek === week
+                                        ? (week === 1 ? '#e26782' : '#3e4f8b') // Darker pink/blue when selected and hovered
+                                        : (week === 1 ? '#fce9ed' : '#e3f2fd'), // Light pink/blue when not selected and hovered
                                 },
                             }}
                         >
@@ -149,11 +153,17 @@ export default function MenuPage() {
                                 flexDirection: 'column',
                                 py: 1,
                                 minWidth: 60,
-                                backgroundColor: selectedDay?.date === item.date ? '#f27b96' : 'transparent',
-                                color: selectedDay?.date === item.date ? '#fff' : '#f27b96',
-                                borderColor: '#f27b96',
+                                backgroundColor: selectedDay?.date === item.date
+                                    ? (selectedWeek === 1 ? '#f27b96' : '#3e4f8b') // Pink for Week 1, Blue for Weeks 2-4
+                                    : 'transparent',
+                                color: selectedDay?.date === item.date
+                                    ? '#fff'
+                                    : (selectedWeek === 1 ? '#f27b96' : '#3e4f8b'), // Pink text for Week 1, Blue text for Weeks 2-4
+                                borderColor: selectedWeek === 1 ? '#f27b96' : '#3e4f8b',
                                 '&:hover': {
-                                    backgroundColor: selectedDay?.date === item.date ? '#e26782' : '#fce9ed',
+                                    backgroundColor: selectedDay?.date === item.date
+                                        ? (selectedWeek === 1 ? '#e26782' : '#3e4f8b') // Darker pink/blue when selected and hovered
+                                        : (selectedWeek === 1 ? '#fce9ed' : '#e3f2fd'), // Light pink/blue when not selected and hovered
                                 },
                             }}
                         >
@@ -162,7 +172,6 @@ export default function MenuPage() {
                         </Button>
                     ))}
                 </Box>
-
                 {selectedDay && (
                     <>
                         <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2, color: '#f27b96' }}>
@@ -171,11 +180,26 @@ export default function MenuPage() {
 
                         <Box sx={{ display: 'flex', flexDirection: ['column', 'row'], gap: 3, mt: 2 }}>
                             {["Lunch", "Dinner"].map((type) => (
-                                <Paper key={type} elevation={3} sx={{ flex: 1, p: 3, textAlign: 'center', backgroundColor: '#FACAD5' }}>
+                                <Paper
+                                    key={type}
+                                    elevation={3}
+                                    sx={{
+                                        flex: 1,
+                                        p: 3,
+                                        textAlign: 'center',
+                                        backgroundColor: selectedWeek === 1 ? '#FACAD5' : '#B3D9FF' // Pink for Recovery, Blue for Nourish
+                                    }}
+                                >
                                     <Typography variant="h5" sx={{ fontWeight: 'extrabold', textTransform: 'uppercase', color: 'grey.900' }}>
                                         {type}
                                     </Typography>
-                                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#f27b96' }}>
+                                    <Typography
+                                        variant="subtitle1"
+                                        sx={{
+                                            fontWeight: 'bold',
+                                            color: selectedWeek === 1 ? '#f27b96' : '#3e4f8b' // Pink text for Recovery, Blue text for Nourish
+                                        }}
+                                    >
                                         {type === "Lunch" ? "午餐" : "晚餐"}
                                     </Typography>
                                     <Divider sx={{ my: 2 }} />
@@ -190,6 +214,7 @@ export default function MenuPage() {
                                 </Paper>
                             ))}
                         </Box>
+
                     </>
                 )}
             </Box>

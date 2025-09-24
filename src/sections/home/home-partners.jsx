@@ -3,11 +3,10 @@ import Typography from '@mui/material/Typography';
 
 // Partner data
 const partners = [
-    { id: 1, src: '/assets/partners/partner-1.avif', alt: 'bbyeol' },
-    { id: 2, src: '/assets/partners/partner-2.avif', alt: 'Beauty Mum & Babies' },
-    { id: 3, src: '/assets/partners/partner-3.avif', alt: 'Mount Alvernia Hospital' },
-    { id: 4, src: '/assets/partners/partner-4.avif', alt: 'Mummies Club' },
-    { id: 5, src: '/assets/partners/partner-5.avif', alt: 'Queen' },
+    { id: 1, src: '/assets/partners/partner-1.avif', alt: 'Beauty Mum & Babies' },
+    { id: 2, src: '/assets/partners/partner-2.avif', alt: 'Mount Alvernia Hospital' },
+    { id: 3, src: '/assets/partners/partner-3.avif', alt: 'Mummies Club' },
+    { id: 4, src: '/assets/partners/partner-4.avif', alt: 'Queen' },
 ];
 
 // ----------------------------------------------------------------------

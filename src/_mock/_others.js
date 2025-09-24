@@ -211,7 +211,7 @@ export const _faqs = [
         id: 'sf-2',
         value: 'panel-sf-2',
         heading: 'Where do we deliver?',
-        detail: 'We deliver island wide (strictly to residential address only regardless trial meal or package meal) except Sentosa and Tuas areas.'
+        detail: 'We deliver island wide (strictly to residential address only regardless trial meal or package meal) except Tuas areas.\nFor delivery to Sentosa, additional $20 per trip.'
       },
       {
         id: 'sf-3',
@@ -235,7 +235,7 @@ export const _faqs = [
         id: 'sf-6',
         value: 'panel-sf-6',
         heading: 'Can I upgrade my package?',
-        detail: 'Customers may upgrade their package by informing us 3 working days in advance by 2:00PM, before the last day of the package.\n\nCustomers would have top-up the difference in package price and payment can only be done via Cash or Bank Transfer.'
+        detail: 'Customers may upgrade their package by informing us 3 working days in advance by 2:00PM, before the last day of the package.\n\nCustomers would have top-up the difference in packages price and payment can be done by Bank Transfer.'
       },
       {
         id: 'sf-7',
@@ -259,7 +259,7 @@ export const _faqs = [
         id: 'cr-1',
         value: 'panel-cr-1',
         heading: 'What is your cancellation and refund policy?',
-        detail: 'Cancellation of service:\n• There would be strictly no cancellation for package purchased.\n• Once cancelled the package cannot be reinstated.\n\nRefunds:\n• There would be strictly no refunds for package purchased.'
+        detail: 'Cancellation of service:\n• Cancellation requests for purchased packages are generally not permitted and will only be considered in exceptional circumstances, strictly on a case-by-case basis.\n• Once a package is cancelled, it cannot be reinstated.\n\nRefunds:\n• Refunds for purchased packages are strictly not offered. In exceptional cases, a refund may be granted at management’s sole discretion, assessed on a case-by-case basis.'
       }
     ]
   },
@@ -313,37 +313,7 @@ export const _faqs = [
         id: 'bmb-6',
         value: 'panel-bmb-6',
         heading: 'What is your cancellation / refund policy?',
-        detail: 'For the full T&C, please click here.'
-      }
-    ]
-  },
-  {
-    id: 6,
-    category: 'Bbyeol Solaris UV Sterilizer',
-    questions: [
-      {
-        id: 'uv-1',
-        value: 'panel-uv-1',
-        heading: 'When will my Solaris UVC Sterilizer be delivered?',
-        detail: 'You can expect your order to be delivered within 5 days from the date of purchase.'
-      },
-      {
-        id: 'uv-2',
-        value: 'panel-uv-2',
-        heading: 'Can I change my delivery address?',
-        detail: 'Yes you may. Customers would have to inform Chilli Padi Confinement 3 working days in advance in order for us to make the necessary arrangements. Customer may call us at 6914 9900, email us (confinement@chillipadi.com.sg) or chat with us on Messenger.'
-      },
-      {
-        id: 'uv-3',
-        value: 'panel-uv-3',
-        heading: 'What do I do if I miss scheduled delivery?',
-        detail: 'You can reach out to Bbyeol by calling them at 6481 4572. However, rest assured that Bbyeol will reach out to you prior to the delivery to confirm the timing.'
-      },
-      {
-        id: 'uv-4',
-        value: 'panel-uv-4',
-        heading: 'What is the warranty like?',
-        detail: 'Kindly refer to Bbyeol’s Product Registration & Warranty FAQ page for the details.'
+        detail: 'For the full T&C, please <a href="https://beautymumsbabies.com/terms-and-conditions/" target="_blank" rel="noopener noreferrer">click here</a>.'
       }
     ]
   }

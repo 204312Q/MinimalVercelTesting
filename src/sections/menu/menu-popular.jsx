@@ -49,7 +49,7 @@ export function MenuPopular({ sx, ...other }) {
         <Box component="section" sx={[{ overflow: 'hidden' }, ...(Array.isArray(sx) ? sx : [sx])]} {...other}>
             <Container component={MotionViewport} sx={{ textAlign: 'center', py: { xs: 3, md: 3 } }}>
                 <Typography variant="h2" sx={{ my: 3, color: 'primary.main' }}>
-                    Top 3 Dishes
+                    Our Popular Dishes
                 </Typography>
                 <Box sx={{ position: 'relative' }}>
                     <CarouselArrowFloatButtons
