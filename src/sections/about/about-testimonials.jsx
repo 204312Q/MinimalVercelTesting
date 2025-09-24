@@ -93,7 +93,7 @@ export function AboutTestimonials({ sx, ...other }) {
           ...theme.mixins.bgGradient({
             images: [
               `linear-gradient(0deg, ${varAlpha(theme.vars.palette.grey['900Channel'], 0.7)}, ${varAlpha(theme.vars.palette.grey['900Channel'], 0.6)})`,
-              `url(${CONFIG.assetsDir}/assets/background/confinement_group_shot.png)`,
+              `url(${CONFIG.assetsDir}/assets/background/confinement_group_shot.avif)`,
             ],
           }),
           overflow: 'hidden',
