@@ -8,7 +8,7 @@ import { getMenuIndexesForDate } from "../../components/menu/getMenuIndexesForDa
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers';
-import NextLink from 'next/link';
+import { paths } from 'src/routes/paths';
 
 const BASE_DATE = parseISO("2025-01-01");
 
@@ -227,21 +227,12 @@ export default function MenuPage() {
                 }}
             >
                 <Button
-                    component={NextLink}
-                    href="/order"
                     variant="contained"
-                    sx={{
-                        backgroundColor: '#f27b96',
-                        color: '#fff',
-                        borderRadius: '12px',
-                        px: 4,
-                        py: 1.5,
-                        textTransform: 'none',
-                        fontWeight: 'bold',
-                        '&:hover': {
-                            backgroundColor: '#e26782',
-                        },
-                    }}
+                    color="primary"
+                    size="large"
+                    href={paths.product.root}
+                    component="a"
+                    sx={{ minWidth: 240 }}
                 >
                     Order Now
                 </Button>

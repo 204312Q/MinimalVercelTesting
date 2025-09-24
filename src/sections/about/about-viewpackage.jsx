@@ -39,7 +39,7 @@ export function AboutViewPackage({ sx, ...other }) {
                             }}
                         >
                             <Image
-                                src="/aboutUs/confinementPackage.png"
+                                src="/aboutUs/confinementPackage.avif"
                                 alt="Confinement Package"
                                 width={400}
                                 height={300}
