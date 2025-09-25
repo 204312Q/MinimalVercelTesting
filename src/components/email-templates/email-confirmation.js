@@ -1,5 +1,4 @@
-const logoUrl = 'http://localhost:3032/logo/logo-single.svg' || 'https://minimal-vercel-testing.vercel.app/logo/logo-single.svg';
-
+const logoUrl = 'https://minimal-vercel-testing.vercel.app/logo/logo-single.png';
 
 // Full Payment Confirmation Template
 export function fullPaymentConfirmationTemplate(order) {
@@ -47,6 +46,7 @@ export function fullPaymentConfirmationTemplate(order) {
 
   return `
     <div style="font-family: Arial, sans-serif; color: #222; max-width: 700px; margin: auto; margin-bottom: 24px; margin-top: 24px;">
+    <hr />
     <img src="${logoUrl}" 
            alt="Chilli Padi Confinement Logo" 
            style="height: 80px; width: auto; margin-bottom: 16px; display: block;"
@@ -184,7 +184,8 @@ export function partialPaymentTemplate(order) {
 
   return `
     <div style="font-family: Arial, sans-serif; color: #222; max-width: 700px; margin: auto;">
-<img src="${logoUrl}" 
+    <hr />   
+    <img src="${logoUrl}" 
            alt="Chilli Padi Confinement Logo" 
            style="height: 80px; width: auto; margin-bottom: 16px; display: block;"
            width="160" 
