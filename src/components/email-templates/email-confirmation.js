@@ -1,31 +1,30 @@
 // Cloudinary configuration
-// NEED THE ENV FOR CLOUDINARY
-// const CLOUDINARY_CONFIG = {
-//   cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'your-cloud-name',
-//   folder: 'logo', // Optional: organize images in folders
-//   version: 'v1234567890' // Optional: for cache busting
-// };
+const CLOUDINARY_CONFIG = {
+  cloudName: 'dpa9be0aj',
+  folder: '', // No folder needed since your image is at root
+  version: 'v1758793213'
+};
 
 // Generate Cloudinary URL
-// const getCloudinaryImageUrl = (publicId, options = {}) => {
-//   const {
-//     width = 160,
-//     height = 80,
-//     format = 'auto',
-//     quality = 'auto',
-//     crop = 'scale'
-//   } = options;
+const getCloudinaryImageUrl = (publicId, options = {}) => {
+  const {
+    width = 160,
+    height = 80,
+    format = 'auto',
+    quality = 'auto',
+    crop = 'scale'
+  } = options;
 
-//   return `https://res.cloudinary.com/${CLOUDINARY_CONFIG.cloudName}/image/upload/w_${width},h_${height},c_${crop},f_${format},q_${quality}/${CLOUDINARY_CONFIG.folder}/${publicId}`;
-// };
+  return `https://res.cloudinary.com/${CLOUDINARY_CONFIG.cloudName}/image/upload/w_${width},h_${height},c_${crop},f_${format},q_${quality}/${CLOUDINARY_CONFIG.version}/${publicId}`;
+};
 
 // Logo URL with optimizations for email
-// const logoUrl = getCloudinaryImageUrl('chilli-padi-logo', {
-//   width: 160,
-//   height: 80,
-//   format: 'png',
-//   quality: '80'
-// });
+const logoUrl = getCloudinaryImageUrl('logo-single_gcztpt', {
+  width: 160,
+  height: 80,
+  format: 'png',
+  quality: '80'
+});
 
 // Full Payment Confirmation Template
 export function fullPaymentConfirmationTemplate(order) {
@@ -73,7 +72,7 @@ export function fullPaymentConfirmationTemplate(order) {
 
   return `
     <div style="font-family: Arial, sans-serif; color: #222; max-width: 700px; margin: auto; margin-bottom: 24px; margin-top: 24px;">
-      <img src="" 
+      <img src="${logoUrl}" 
            alt="Chilli Padi Confinement Logo" 
            style="height: 80px; width: auto; margin-bottom: 16px; display: block;"
            width="160" 
@@ -211,7 +210,7 @@ export function partialPaymentTemplate(order) {
 
   return `
     <div style="font-family: Arial, sans-serif; color: #222; max-width: 700px; margin: auto;">
-      <img src="" 
+      <img src="${logoUrl}" 
            alt="Chilli Padi Confinement Logo" 
            style="height: 80px; width: auto; margin-bottom: 16px; display: block;"
            width="160" 
