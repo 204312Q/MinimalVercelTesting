@@ -101,7 +101,7 @@ export async function POST(request) {
         delivery: {
           fullName: 'Jen Chang',
           phone: '+6591779126',
-          email: 'ellisemarimon991q@gmail.com',
+          email: 'ellisemarimon@chilliapi.com.sg',
           floor: '11',
           unit: '130',
           addressLine: '322B Anchorvale Drive',
@@ -110,7 +110,7 @@ export async function POST(request) {
         customer: {
           id: 'cust-1',
           name: 'Jen Chang',
-          email: 'ellisemarimon991q@gmail.com',
+          email: 'ellisemarimon@chilliapi.com.sg',
           phone: '+6591779126'
         }
       };

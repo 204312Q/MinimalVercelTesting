@@ -5,17 +5,18 @@ const CLOUDINARY_CONFIG = {
   version: 'v1758793213'
 };
 
-// Generate Cloudinary URL
+// Generate Cloudinary URL - FIXED VERSION
 const getCloudinaryImageUrl = (publicId, options = {}) => {
   const {
     width = 160,
     height = 80,
-    format = 'auto',
-    quality = 'auto',
+    format = 'png', // Changed from 'auto' to 'png'
+    quality = '80',
     crop = 'scale'
   } = options;
 
-  return `https://res.cloudinary.com/${CLOUDINARY_CONFIG.cloudName}/image/upload/w_${width},h_${height},c_${crop},f_${format},q_${quality}/${CLOUDINARY_CONFIG.version}/${publicId}`;
+  // Correct URL structure: version comes right after /upload/
+  return `https://res.cloudinary.com/${CLOUDINARY_CONFIG.cloudName}/image/upload/${CLOUDINARY_CONFIG.version}/w_${width},h_${height},c_${crop},f_${format},q_${quality}/${publicId}`;
 };
 
 // Logo URL with optimizations for email
