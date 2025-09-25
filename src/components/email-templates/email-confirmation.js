@@ -1,31 +1,5 @@
-// Cloudinary configuration
-const CLOUDINARY_CONFIG = {
-  cloudName: 'dpa9be0aj',
-  folder: '', // No folder needed since your image is at root
-  version: 'v1758793213'
-};
-
-// Generate Cloudinary URL - FIXED VERSION
-const getCloudinaryImageUrl = (publicId, options = {}) => {
-  const {
-    width = 160,
-    height = 80,
-    format = 'png', // Changed from 'auto' to 'png'
-    quality = '80',
-    crop = 'scale'
-  } = options;
-
-  // Correct URL structure: version comes right after /upload/
-  return `https://res.cloudinary.com/${CLOUDINARY_CONFIG.cloudName}/image/upload/${CLOUDINARY_CONFIG.version}/w_${width},h_${height},c_${crop},f_${format},q_${quality}/${publicId}`;
-};
-
-// Logo URL with optimizations for email
-const logoUrl = getCloudinaryImageUrl('logo-single_gcztpt', {
-  width: 160,
-  height: 80,
-  format: 'png',
-  quality: '80'
-});
+// Direct Cloudinary URL - most reliable for emails
+const logoUrl = 'https://res.cloudinary.com/dpa9be0aj/image/upload/v1758793213/logo-single_gcztpt.png';
 
 // Full Payment Confirmation Template
 export function fullPaymentConfirmationTemplate(order) {
