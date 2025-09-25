@@ -1,5 +1,5 @@
-// Direct Cloudinary URL - most reliable for emails
-const logoUrl = 'https://res.cloudinary.com/dpa9be0aj/image/upload/v1758793213/logo-single_gcztpt.png';
+const logoUrl = 'http://localhost:3032/logo/logo-single.svg' || 'https://minimal-vercel-testing.vercel.app/logo/logo-single.svg';
+
 
 // Full Payment Confirmation Template
 export function fullPaymentConfirmationTemplate(order) {
@@ -47,13 +47,12 @@ export function fullPaymentConfirmationTemplate(order) {
 
   return `
     <div style="font-family: Arial, sans-serif; color: #222; max-width: 700px; margin: auto; margin-bottom: 24px; margin-top: 24px;">
-      <img src="${logoUrl}" 
+    <img src="${logoUrl}" 
            alt="Chilli Padi Confinement Logo" 
            style="height: 80px; width: auto; margin-bottom: 16px; display: block;"
            width="160" 
-           height="80" />
-
-      <div style="margin-bottom: 8px;">
+           height="80" />  
+    <div style="margin-bottom: 8px;">
         <div>
           Blk 3015 Bedok North Street 5 #04-19 <br/>
           Shimei East Kitchen <br/>
@@ -185,12 +184,11 @@ export function partialPaymentTemplate(order) {
 
   return `
     <div style="font-family: Arial, sans-serif; color: #222; max-width: 700px; margin: auto;">
-      <img src="${logoUrl}" 
+<img src="${logoUrl}" 
            alt="Chilli Padi Confinement Logo" 
            style="height: 80px; width: auto; margin-bottom: 16px; display: block;"
            width="160" 
            height="80" />
-      
       <div style="margin-bottom: 8px;">
         <div>
           Blk 3015 Bedok North Street 5 #04-19<br/>
