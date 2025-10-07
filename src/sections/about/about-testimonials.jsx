@@ -92,7 +92,7 @@ export function AboutTestimonials({ sx, ...other }) {
         (theme) => ({
           ...theme.mixins.bgGradient({
             images: [
-              `linear-gradient(0deg, ${varAlpha(theme.vars.palette.grey['900Channel'], 0.7)}, ${varAlpha(theme.vars.palette.grey['900Channel'], 0.6)})`,
+              `linear-gradient(0deg, ${varAlpha(theme.vars.palette.grey['900Channel'], 0.5)}, ${varAlpha(theme.vars.palette.grey['900Channel'], 0.6)})`,
               `url(${CONFIG.assetsDir}/assets/background/confinement_group_shot.avif)`,
             ],
           }),

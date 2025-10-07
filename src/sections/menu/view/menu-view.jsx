@@ -9,7 +9,7 @@ import { MenuNextStep } from '../menu-next-steps';
 export function MenuView() {
     return (
         <>
-            {/* <MenuHero /> */}
+            <MenuHero />
             <MenuPopular />
             <MenuCalendar />
             <MenuNextStep />

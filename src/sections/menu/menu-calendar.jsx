@@ -102,40 +102,52 @@ export default function MenuPage() {
                     </LocalizationProvider>
                 </Box>
 
-                <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', flexWrap: 'wrap', mb: 2 }}>
+                {/* Week Selection Buttons */}
+                <Box sx={{ display: 'flex', gap: { xs: 0.5, md: 1 }, justifyContent: 'center', flexWrap: 'wrap', mb: 2 }}>
                     {[1, 2, 3, 4].map((week) => (
                         <Button
                             key={week}
                             variant={selectedWeek === week ? "contained" : "outlined"}
                             onClick={() => setSelectedWeek(week)}
                             sx={{
-                                flex: '1 0 22%',
+                                flex: { xs: '1 0 48%', sm: '1 0 22%' }, // 2 per row on mobile, 4 on larger screens
                                 display: 'flex',
                                 flexDirection: 'column',
-                                py: 2,
+                                py: { xs: 1.5, md: 2.5 },
+                                px: { xs: 1, md: 2 },
                                 fontWeight: 'bold',
-                                minWidth: 80,
+                                minWidth: { xs: 140, md: 100 }, // Adjust minimum width for mobile
+                                minHeight: { xs: 60, md: 70 },
+                                maxWidth: { xs: 160, md: 'none' }, // Prevent buttons from getting too wide on mobile
                                 backgroundColor: selectedWeek === week
-                                    ? (week === 1 ? '#f27b96' : '#3e4f8b') // Pink for Week 1, Blue for Weeks 2-4
-                                    : (week === 1 ? '#FACAD5' : '#B3D9FF'), // Light pink for Week 1, Light blue for Weeks 2-4
-                                color: selectedWeek === week ? '#fff' : (week === 1 ? '#f27b96' : '#1976d2'),
-                                borderColor: week === 1 ? '#FACAD5' : '#B3D9FF',
+                                    ? (week === 1 ? '#f27b96' : '#3e4f8b')
+                                    : 'white',
+                                color: selectedWeek === week
+                                    ? '#fff'
+                                    : (week === 1 ? '#f27b96' : '#3e4f8b'),
+                                borderColor: week === 1 ? '#f27b96' : '#3e4f8b',
+                                borderWidth: 2,
+                                borderRadius: 2,
+                                boxShadow: selectedWeek === week ? 3 : 1,
                                 '&:hover': {
                                     backgroundColor: selectedWeek === week
-                                        ? (week === 1 ? '#e26782' : '#3e4f8b') // Darker pink/blue when selected and hovered
-                                        : (week === 1 ? '#fce9ed' : '#e3f2fd'), // Light pink/blue when not selected and hovered
+                                        ? (week === 1 ? '#e26782' : '#2a3a6b')
+                                        : (week === 1 ? '#fce9ed' : '#e3f2fd'),
+                                    boxShadow: 2,
+                                    transform: 'translateY(-1px)',
                                 },
+                                transition: 'all 0.2s ease-in-out',
                             }}
                         >
-                            <span>Week {week}</span>
-                            <span style={{ fontSize: 12, opacity: 0.8 }}>
+                            <span style={{ fontSize: '1rem', marginBottom: '2px' }}>Week {week}</span>
+                            <span style={{ fontSize: '0.7rem', opacity: 0.9, fontWeight: 500 }}>
                                 {week === 1 ? "Recovery" : "Nourish"}
                             </span>
                         </Button>
                     ))}
                 </Box>
-
-                <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', flexWrap: 'wrap', mb: 6 }}>
+                {/* Day Selection Buttons */}
+                <Box sx={{ display: 'flex', gap: { xs: 0.3, md: 1 }, justifyContent: 'center', flexWrap: 'nowrap', mb: 6 }}>
                     {weekDays.map((item) => (
                         <Button
                             key={item.date}
@@ -148,33 +160,60 @@ export default function MenuPage() {
                                 }));
                             }}
                             sx={{
-                                flex: '1 0 13%',
+                                flex: '1', // Equal flex for all buttons
                                 display: 'flex',
                                 flexDirection: 'column',
-                                py: 1,
-                                minWidth: 60,
+                                py: { xs: 1, md: 1.5 },
+                                px: { xs: 0.3, md: 1 }, // Reduced padding on mobile
+                                minWidth: { xs: 40, md: 80 }, // Smaller minimum width on mobile
+                                maxWidth: { xs: 50, md: 'none' }, // Add max width to prevent overflow
+                                minHeight: { xs: 50, md: 65 },
                                 backgroundColor: selectedDay?.date === item.date
-                                    ? (selectedWeek === 1 ? '#f27b96' : '#3e4f8b') // Pink for Week 1, Blue for Weeks 2-4
-                                    : 'transparent',
+                                    ? (selectedWeek === 1 ? '#f27b96' : '#3e4f8b')
+                                    : 'white',
                                 color: selectedDay?.date === item.date
                                     ? '#fff'
-                                    : (selectedWeek === 1 ? '#f27b96' : '#3e4f8b'), // Pink text for Week 1, Blue text for Weeks 2-4
+                                    : (selectedWeek === 1 ? '#f27b96' : '#3e4f8b'),
                                 borderColor: selectedWeek === 1 ? '#f27b96' : '#3e4f8b',
+                                borderWidth: 2,
+                                borderRadius: 2,
+                                boxShadow: selectedDay?.date === item.date ? 2 : 0.5,
                                 '&:hover': {
                                     backgroundColor: selectedDay?.date === item.date
-                                        ? (selectedWeek === 1 ? '#e26782' : '#3e4f8b') // Darker pink/blue when selected and hovered
-                                        : (selectedWeek === 1 ? '#fce9ed' : '#e3f2fd'), // Light pink/blue when not selected and hovered
+                                        ? (selectedWeek === 1 ? '#e26782' : '#2a3a6b')
+                                        : (selectedWeek === 1 ? '#fce9ed' : '#e3f2fd'),
+                                    transform: 'translateY(-1px)',
+                                    boxShadow: 1,
                                 },
+                                transition: 'all 0.2s ease-in-out',
                             }}
                         >
-                            <span style={{ fontWeight: 600, textTransform: 'uppercase' }}>{item.day.slice(0, 3)}</span>
-                            <span style={{ fontSize: 12 }}>{item.date}</span>
+                            <Typography
+                                sx={{
+                                    fontWeight: 700,
+                                    textTransform: 'uppercase',
+                                    fontSize: { xs: '0.6rem', md: '0.9rem' }, // Smaller font on mobile
+                                    mb: 0.25,
+                                    color: 'inherit'
+                                }}
+                            >
+                                {item.day.slice(0, 3)}
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    fontSize: { xs: '0.5rem', md: '0.75rem' }, // Smaller font on mobile
+                                    fontWeight: 500,
+                                    color: 'inherit'
+                                }}
+                            >
+                                {item.date.split('/').slice(0, 2).join('/')}
+                            </Typography>
                         </Button>
                     ))}
                 </Box>
                 {selectedDay && (
                     <>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2, color: '#f27b96' }}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2, color: 'grey.900' }}>
                             LONGAN RED DATE TEA SERVED WITH EVERY MEAL
                         </Typography>
 
@@ -206,8 +245,33 @@ export default function MenuPage() {
                                     <Box sx={{ textAlign: 'left' }}>
                                         {(type === "Lunch" ? menu.lunchDishes : menu.dinnerDishes).map((dish, index) => (
                                             <Box key={index} sx={{ mb: 2 }}>
-                                                <Typography sx={{ fontWeight: 600, color: 'grey.900' }}>{dish.english}</Typography>
-                                                <Typography sx={{ color: 'grey.700' }}>{dish.chinese}</Typography>
+                                                <Typography
+                                                    sx={{
+                                                        fontWeight: 600,
+                                                        color: 'grey.900',
+                                                        lineHeight: 1.4,
+                                                        wordBreak: 'break-word', // Prevent overflow
+                                                        hyphens: 'auto' // Allow hyphenation
+                                                    }}
+                                                >
+                                                    {typeof dish.english === 'string'
+                                                        ? dish.english.replace(/[\u4e00-\u9fff]/g, '').trim() // Remove any Chinese characters
+                                                        : dish.english || 'N/A'
+                                                    }
+                                                </Typography>
+                                                <Typography
+                                                    sx={{
+                                                        color: 'grey.700',
+                                                        lineHeight: 1.4,
+                                                        wordBreak: 'break-word',
+                                                        fontSize: '0.95rem'
+                                                    }}
+                                                >
+                                                    {typeof dish.chinese === 'string'
+                                                        ? dish.chinese.replace(/[a-zA-Z]/g, '').trim() // Remove any English characters
+                                                        : dish.chinese || 'N/A'
+                                                    }
+                                                </Typography>
                                             </Box>
                                         ))}
                                     </Box>

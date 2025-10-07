@@ -17,8 +17,8 @@ export function AboutViewPackage({ sx, ...other }) {
             component="section"
             sx={[
                 () => ({
-                    height: { md: 560 },
-                    py: { xs: 10, md: 0 },
+                    minHeight: { md: 400 },
+                    py: { xs: 5, md: 6 },
                     overflow: 'hidden',
                     position: 'relative',
                     display: 'flex',
@@ -28,48 +28,67 @@ export function AboutViewPackage({ sx, ...other }) {
             ]}
             {...other}
         >
-            <Container>
-                <Grid container spacing={4} alignItems="center">
-                    {/* Left side - Image */}
+            <Container maxWidth="lg">
+                <Grid
+                    container
+                    spacing={0}
+                    alignItems="center"
+                    sx={{ minHeight: { md: 350 } }}
+                >
+                    {/* Image Section */}
                     <Grid item xs={12} md={6}>
                         <Box
                             sx={{
                                 display: 'flex',
-                                justifyContent: 'center',
+                                justifyContent: { xs: 'center', md: 'flex-end' },
+                                alignItems: 'center',
+                                height: { xs: 'auto', md: '100%' },
+                                mb: { xs: 4, md: 0 },
+                                pr: { md: 2 }, // Add padding right on desktop
                             }}
                         >
-                            <Image
-                                src="/aboutUs/confinementPackage.avif"
-                                alt="Confinement Package"
-                                width={400}
-                                height={300}
-                                style={{
-                                    maxWidth: '100%',
-                                    height: 'auto',
-                                    borderRadius: 12,
+                            <Box
+                                sx={{
+                                    width: { xs: '70%', sm: '60%', md: '90%' },
+                                    maxWidth: { xs: 280, md: 400 },
                                 }}
-                            />
+                            >
+                                <Image
+                                    src="/aboutUs/confinementPackage.avif"
+                                    alt="Confinement Package"
+                                    width={400}
+                                    height={300}
+                                    style={{
+                                        maxWidth: '100%',
+                                        height: 'auto',
+                                        borderRadius: 12,
+                                    }}
+                                />
+                            </Box>
                         </Box>
                     </Grid>
 
-                    {/* Right side - Content */}
+                    {/* Content Section */}
                     <Grid item xs={12} md={6}>
                         <Box
                             sx={{
-                                color: 'white',
-                                textAlign: 'center', // Center the text on all screen sizes
                                 display: 'flex',
                                 flexDirection: 'column',
-                                alignItems: 'center',
+                                justifyContent: 'center',
+                                alignItems: 'center', // Center-align all content
+                                height: { xs: 'auto', md: '100%' },
+                                textAlign: 'center', // Center-align text
+
                             }}
                         >
                             <Typography
                                 variant="h3"
                                 sx={{
                                     fontWeight: 'bold',
-                                    mb: 3,
+                                    mb: { xs: 1.5, md: 2 },
                                     color: '#f27b96',
-                                    fontSize: { xs: '2rem', md: '2.5rem' },
+                                    fontSize: { xs: '1.75rem', md: '2.5rem' },
+                                    lineHeight: { xs: 1.2, md: 1.3 },
                                 }}
                             >
                                 Convenience and Quality
@@ -78,10 +97,11 @@ export function AboutViewPackage({ sx, ...other }) {
                             <Typography
                                 variant="body1"
                                 sx={{
-                                    mb: 4,
-                                    lineHeight: 1.8,
-                                    fontSize: { xs: '1rem', md: '1.1rem' },
-                                    color: 'primary.darker',
+                                    mb: { xs: 2.5, md: 3 },
+                                    lineHeight: 1.7,
+                                    fontSize: { xs: '0.95rem', md: '1.1rem' },
+                                    color: 'text.secondary',
+                                    maxWidth: 450,
                                 }}
                             >
                                 Our thermal wares deliver warm, nutritious meals straight to your doorstep.
@@ -94,12 +114,13 @@ export function AboutViewPackage({ sx, ...other }) {
                                 sx={{
                                     backgroundColor: '#f27b96',
                                     color: 'white',
-                                    px: 4,
-                                    py: 1.5,
+                                    px: { xs: 3, md: 4 },
+                                    py: { xs: 1.2, md: 1.5 },
                                     borderRadius: 2,
-                                    fontSize: '1.1rem',
+                                    fontSize: { xs: '1rem', md: '1.1rem' },
                                     fontWeight: 'bold',
                                     textTransform: 'none',
+                                    minWidth: { xs: 140, md: 160 },
                                     '&:hover': {
                                         backgroundColor: '#e26782',
                                     },

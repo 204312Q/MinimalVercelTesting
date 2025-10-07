@@ -111,20 +111,29 @@ export function HomePopularDish({ sx, ...other }) {
 function MemberCard({ popular }) {
   return (
     <Box>
-      <Box sx={{ px: 1 }}>
-        <Image alt={popular.alt} src={popular.image} ratio="1/1" sx={{ borderRadius: 2 }} />
+      <Box sx={{ px: 1, maxWidth: { xs: 200, md: 'none' }, mx: { xs: 'auto', md: 'initial' } }}>
+        <Image
+          alt={popular.alt}
+          src={popular.image}
+          ratio="1/1"
+          sx={{
+            borderRadius: 2,
+            maxHeight: { xs: 180, md: 'none' }, // Limit height on mobile only
+            objectFit: { xs: 'contain', md: 'cover' }, // Use contain on mobile, cover on desktop
+          }}
+        />
       </Box>
 
       <Box
         sx={{
-          p: 2,
+          p: { xs: 1.5, md: 2 }, // Smaller padding on mobile
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           flexDirection: 'column',
         }}
       >
-        <Typography variant="h6" sx={{ mt: 1, mb: 0.5 }}>
+        <Typography variant="h6" sx={{ mt: { xs: 0.5, md: 1 }, mb: 0.5, fontSize: { xs: '0.9rem', md: '1.25rem' } }}>
           {popular.name}
         </Typography>
       </Box>

@@ -26,40 +26,20 @@ export function MenuHero({ sx, ...other }) {
             <Box
                 sx={{
                     width: '100vw',
-                    height: { xs: 180, sm: 300, md: 560 },
+                    height: { xs: 180, sm: 220, md: 400 }, // Reduced heights to match image ratio
                     position: 'relative',
                     borderRadius: 0,
                     overflow: 'hidden',
                 }}
             >
                 <Image
-                    src="/aboutUs/cpc-dish.png"
+                    src="/banners/Confinement_Menu_Banner.avif"
                     alt="Dish Banner"
                     fill
+                    // Remove this line: priority
                     style={{
                         objectFit: 'cover',
-                        width: '100%',
-                        height: '100%',
-                    }}
-                    sizes="100vw"
-                />
-            </Box>
-            {/* Bottom Image */}
-            <Box
-                sx={{
-                    width: '100vw',
-                    height: { xs: 180, sm: 300, md: 560 },
-                    position: 'relative',
-                    borderRadius: 0,
-                    overflow: 'hidden',
-                }}
-            >
-                <Image
-                    src="/aboutUs/cpc-dish.png"
-                    alt="Dish Banner"
-                    fill
-                    style={{
-                        objectFit: 'cover',
+                        objectPosition: 'center',
                         width: '100%',
                         height: '100%',
                     }}

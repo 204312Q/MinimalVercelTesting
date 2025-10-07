@@ -16,7 +16,8 @@ export function AboutVision({ sx, ...other }) {
       component="section"
       sx={[
         {
-          py: { xs: 10, md: 10 },
+          pt: { xs: 10, md: 15 },
+          pb: { xs: 5, md: 5 },
         },
         ...(Array.isArray(sx) ? sx : [sx])
       ]}

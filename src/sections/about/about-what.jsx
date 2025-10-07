@@ -35,7 +35,7 @@ export function AboutWhat({ sx, ...other }) {
           inset: 0,
           width: '100%',
           height: '100%',
-          backgroundImage: `url(/aboutUs/owner1.avif)`,
+          backgroundImage: `url(/aboutUs/owner2.png)`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           zIndex: 1,
@@ -60,7 +60,7 @@ export function AboutWhat({ sx, ...other }) {
           zIndex: 3,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'flex-start', // Align card to the left side
+          justifyContent: { xs: 'center', md: 'flex-start' }, // Center on mobile, left on desktop
           height: '100%',
           maxWidth: 'lg',
         }}
@@ -70,10 +70,10 @@ export function AboutWhat({ sx, ...other }) {
             bgcolor: 'white',
             borderRadius: 2,
             p: { xs: 3, md: 4 },
-            maxWidth: 500,
+            maxWidth: 700, // Increased from 500 to 700
             boxShadow: 3,
             textAlign: 'left',
-            width: { xs: '90%', sm: 450, md: 500 },
+            width: { xs: '90%', sm: 550, md: 650 },
           }}
         >
           <Typography
