@@ -35,7 +35,7 @@ export function AboutWhat({ sx, ...other }) {
           inset: 0,
           width: '100%',
           height: '100%',
-          backgroundImage: `url(/aboutUs/owner2.png)`,
+          backgroundImage: `url(/aboutUs/owner2.avif)`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           zIndex: 1,

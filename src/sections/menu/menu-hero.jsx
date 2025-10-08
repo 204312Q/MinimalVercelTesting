@@ -1,10 +1,14 @@
 'use client';
 import Box from '@mui/material/Box';
 import Image from 'next/image';
+import { useMediaQuery, useTheme } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
 export function MenuHero({ sx, ...other }) {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
     return (
         <Box
             component="section"
@@ -26,17 +30,19 @@ export function MenuHero({ sx, ...other }) {
             <Box
                 sx={{
                     width: '100vw',
-                    height: { xs: 180, sm: 220, md: 400 }, // Reduced heights to match image ratio
+                    height: { xs: 300, sm: 350, md: 650 }, // Increased all heights
                     position: 'relative',
                     borderRadius: 0,
                     overflow: 'hidden',
                 }}
             >
                 <Image
-                    src="/banners/Confinement_Menu_Banner.avif"
+                    src={isMobile
+                        ? "/banners/Confinement_Menu_Banner_Mobile.avif" // Create a mobile version
+                        : "/banners/Confinement_Menu_Banner.avif" // Desktop version
+                    }
                     alt="Dish Banner"
                     fill
-                    // Remove this line: priority
                     style={{
                         objectFit: 'cover',
                         objectPosition: 'center',
